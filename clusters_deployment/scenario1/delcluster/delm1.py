@@ -1,23 +1,13 @@
-import subprocess
-from itertools import islice
 from enoslib.api import generate_inventory,run_ansible
 from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
-
-import logging
-from pathlib import Path
 import enoslib as en
 
-import logging
-import time
-
-name = "m1-sdfcp-2"
+name = "s1-member-1"
 
 clusters = "ecotype"
 
 site = "nantes"
-
-#en.init_logging(logging.INFO)
 
 master_nodes = []
 

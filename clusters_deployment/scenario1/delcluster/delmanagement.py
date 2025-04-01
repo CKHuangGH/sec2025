@@ -1,16 +1,11 @@
-import subprocess
 from enoslib.api import generate_inventory,run_ansible
 from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
 
-import logging
-import time
 
-name = "mcdeploymaster-sdfcp-21"
+name = "s1-management-1"
 
 clusters = ["ecotype"]
-
-#logging.basicConfig(level=logging.DEBUG)
 
 master_nodes = []
 

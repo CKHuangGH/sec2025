@@ -45,7 +45,7 @@ cp = 1
 w=100
 
 virt_conf = (
-    en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2^")
+    en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
     .add_machine(
         roles=["cp"],
         number=cp,
