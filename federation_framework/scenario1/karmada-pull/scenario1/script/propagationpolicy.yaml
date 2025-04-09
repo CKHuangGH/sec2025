@@ -1,0 +1,107 @@
+apiVersion: policy.karmada.io/v1alpha1
+kind: PropagationPolicy
+metadata:
+  name: microservices-policy
+  namespace: microservices-demo
+spec:
+  resourceSelectors:
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: emailservice
+  - apiVersion: v1
+    kind: Service
+    name: emailservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: emailservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: checkoutservice
+  - apiVersion: v1
+    kind: Service
+    name: checkoutservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: checkoutservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: recommendationservice
+  - apiVersion: v1
+    kind: Service
+    name: recommendationservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: recommendationservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  - apiVersion: v1
+    kind: Service
+    name: frontend
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: frontend
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: paymentservice
+  - apiVersion: v1
+    kind: Service
+    name: paymentservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: paymentservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: productcatalogservice
+  - apiVersion: v1
+    kind: Service
+    name: productcatalogservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: productcatalogservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: cartservice
+  - apiVersion: v1
+    kind: Service
+    name: cartservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: cartservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: redis-cart
+  - apiVersion: v1
+    kind: Service
+    name: redis-cart
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: currencyservice
+  - apiVersion: v1
+    kind: Service
+    name: currencyservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: currencyservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: shippingservice
+  - apiVersion: v1
+    kind: Service
+    name: shippingservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: shippingservice
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: adservice
+  - apiVersion: v1
+    kind: Service
+    name: adservice
+  - apiVersion: v1
+    kind: ServiceAccount
+    name: adservice
+  placement:
+    clusterAffinity:
+      clusterNames:
+      - cluster-1

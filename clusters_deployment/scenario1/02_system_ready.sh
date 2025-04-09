@@ -24,8 +24,9 @@ ssh -o StrictHostKeyChecking=no root@$j chmod 777 -R /root/sec2025/
 i=$((i+1))
 done
 
-scp /home/chuang/images/nginx.tar root@$manage:/root/
 scp -r /home/chuang/karmada_package root@$manage:/root/
+scp -r /home/chuang/images_all root@$manage:/root/
+scp -r /home/chuang/images_google root@$manage:/root/
 # scp -r /home/chuang/ocm_package root@$manage:/root/
 
 # scenario1
