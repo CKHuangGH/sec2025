@@ -8,8 +8,3 @@ sleep 30
 kubectl create ns monitoring
     helm install --version 70.4.2 prometheus-community/kube-prometheus-stack --generate-name --set grafana.enabled=false --set alertmanager.enabled=false --set prometheus.service.type=NodePort --set prometheus.prometheusSpec.scrapeInterval="5s" --namespace monitoring
 sleep 30
-
-# echo "Install Metrics server-----------------------"
-# kubectl --context=cluster$cluster create -f metrics_server.yaml
-# ./patch.sh
-# echo "-----------------------Member cluster$cluster is ready----------------------"

@@ -1,12 +1,21 @@
-# propagationpolicy.yaml
 apiVersion: policy.karmada.io/v1alpha1
 kind: PropagationPolicy
 metadata:
-  name: example-policy # The default namespace is `default`.
+  name: deploy-to-cluster1
 spec:
   resourceSelectors:
     - apiVersion: apps/v1
       kind: Deployment
+      labelSelector:
+        matchLabels:
+          deploy-to: cluster1
+    - apiVersion: v1
+      kind: Service
+      labelSelector:
+        matchLabels:
+          deploy-to: cluster1
+    - apiVersion: v1
+      kind: ServiceAccount
       labelSelector:
         matchLabels:
           deploy-to: cluster1
