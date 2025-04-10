@@ -78,6 +78,8 @@ for image in *.tar *.tar.gz; do
     fi
 done
 
+cd /root/sec2025/federation_framework/scenario1/karmada-pull/
+
 cluster=1
 for i in $(cat node_list)
 do
