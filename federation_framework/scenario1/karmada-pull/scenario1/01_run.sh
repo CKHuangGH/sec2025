@@ -3,7 +3,7 @@ read -p "please enter the test number(2000, 4000, 6000, 8000, 10000): " number
 for (( times=0; times<10; times++ )); do
     . ./script/init_reg.sh
     sleep 30
-    kubectl apply -f ./script/propagationpolicy.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
+    kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml 
     mkdir results
     . ./02_run_stress_kpull.sh $number
     . ./03.getdocker.sh $number $times

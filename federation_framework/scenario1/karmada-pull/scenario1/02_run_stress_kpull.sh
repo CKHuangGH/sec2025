@@ -14,15 +14,15 @@ echo "start deployment" >> number.txt
 echo $(date +'%s.%N') >> number.txt
 . ./script/$number.sh > /dev/null 2>&1 &
 
-. ./checking_deployment_kpull.sh $number &
-. ./checking_kpull.sh $number
+. ./script/checking_deployment_kpull.sh $number &
+. ./script/checking_kpull.sh $number
 
-exec -a tophub bash -c "./script/tophub.sh" > /dev/null 2>&1 &
+# exec -a tophub bash -c "./script/tophub.sh" > /dev/null 2>&1 &
 
-for i in $(cat node_exec)
-do 
-	ssh root@$i . /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/script/toppodwa.sh > /dev/null &
-done
+# for i in $(cat node_exec)
+# do 
+# 	ssh root@$i . /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/script/toppodwa.sh > /dev/null &
+# done
 
 sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp' >> cross &
 

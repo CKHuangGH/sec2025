@@ -1,6 +1,10 @@
 #!/bin/bash
 cluster=$1
 
+sudo systemctl stop ntp
+sudo ntpd -gq
+sudo systemctl start ntp
+
 kubectl config use-context cluster$cluster
 helm repo update
 helm install cilium cilium/cilium --version 1.17.2 --wait --wait-for-jobs --namespace kube-system --set operator.replicas=1

@@ -1,3 +1,4 @@
 for ((i=1; i<=800; i++)); do
-    kubectl delete deployment nginx-$i  --kubeconfig /etc/karmada/karmada-apiserver.config
+  export ID=$i
+  envsubst < google_demo.yaml | kubectl delete --kubeconfig /etc/karmada/karmada-apiserver.config -f -
 done
