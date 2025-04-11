@@ -24,7 +24,7 @@ metadata:
   name: emailservice-${ID}
   labels:
     app: emailservice-${ID}
-    deploy-to: cluster1
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -80,7 +80,7 @@ metadata:
   name: emailservice-${ID}
   labels:
     app: emailservice-${ID}
-    deploy-to: cluster1
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -94,7 +94,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: emailservice-${ID}
-  deploy-to: cluster1
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -102,6 +103,7 @@ metadata:
   name: checkoutservice-${ID}
   labels:
     app: checkoutservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -164,6 +166,7 @@ metadata:
   name: checkoutservice-${ID}
   labels:
     app: checkoutservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -177,6 +180,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: checkoutservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -184,6 +189,7 @@ metadata:
   name: recommendationservice-${ID}
   labels:
     app: recommendationservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -241,6 +247,7 @@ metadata:
   name: recommendationservice-${ID}
   labels:
     app: recommendationservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -254,6 +261,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: recommendationservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -261,6 +270,7 @@ metadata:
   name: frontend-${ID}
   labels:
     app: frontend-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -354,6 +364,7 @@ metadata:
   name: frontend-${ID}
   labels:
     app: frontend-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -382,6 +393,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: frontend-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -389,6 +402,7 @@ metadata:
   name: paymentservice-${ID}
   labels:
     app: paymentservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -442,6 +456,7 @@ metadata:
   name: paymentservice-${ID}
   labels:
     app: paymentservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -455,6 +470,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: paymentservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -515,6 +532,7 @@ metadata:
   name: productcatalogservice-${ID}
   labels:
     app: productcatalogservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -528,6 +546,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: productcatalogservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -535,6 +555,7 @@ metadata:
   name: cartservice-${ID}
   labels:
     app: cartservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -589,6 +610,7 @@ metadata:
   name: cartservice-${ID}
   labels:
     app: cartservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -602,6 +624,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cartservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -609,6 +633,7 @@ metadata:
   name: redis-cart-${ID}
   labels:
     app: redis-cart-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -663,6 +688,7 @@ metadata:
   name: redis-cart-${ID}
   labels:
     app: redis-cart-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -765,6 +791,7 @@ metadata:
   name: currencyservice-${ID}
   labels:
     app: currencyservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -819,6 +846,7 @@ metadata:
   name: currencyservice-${ID}
   labels:
     app: currencyservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -832,6 +860,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: currencyservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -839,6 +869,7 @@ metadata:
   name: shippingservice-${ID}
   labels:
     app: shippingservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -892,6 +923,7 @@ metadata:
   name: shippingservice-${ID}
   labels:
     app: shippingservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -905,6 +937,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: shippingservice-${ID}
+  labels:
+    deployto: cluster1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -912,6 +946,7 @@ metadata:
   name: adservice-${ID}
   labels:
     app: adservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:
@@ -967,6 +1002,7 @@ metadata:
   name: adservice-${ID}
   labels:
     app: adservice-${ID}
+    deployto: cluster1
 spec:
   type: ClusterIP
   selector:
@@ -980,4 +1016,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: adservice-${ID}
+  labels:
+    deployto: cluster1
 # [END gke_release_kubernetes_manifests_microservices_demo]
