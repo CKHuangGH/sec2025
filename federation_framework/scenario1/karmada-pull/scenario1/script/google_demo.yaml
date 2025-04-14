@@ -366,7 +366,7 @@ metadata:
     app: frontend-${ID}
     deployto: cluster1
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: frontend-${ID}
   ports:
@@ -479,6 +479,7 @@ metadata:
   name: productcatalogservice-${ID}
   labels:
     app: productcatalogservice-${ID}
+    deployto: cluster1
 spec:
   selector:
     matchLabels:

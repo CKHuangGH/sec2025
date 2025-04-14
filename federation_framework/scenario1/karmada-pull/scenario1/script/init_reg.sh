@@ -2,7 +2,7 @@
 
 kubectl config use-context cluster0
 
-kubectl karmada init
+kubectl karmada init --crds /root/addon/crds.tar.gz
 
 REGISTER_CMD=$(kubectl karmada token create --print-register-command --kubeconfig=/etc/karmada/karmada-apiserver.config)
 
