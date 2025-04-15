@@ -66,7 +66,7 @@ run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
 f = open("node_list", 'a')
 f.write(str(master_nodes[0]))
 f.write("\n")
-f.close
+f.close()
 
 print("Master nodes ........")
 print(master_nodes)

@@ -39,6 +39,7 @@ conf = (
 provider = en.G5k(conf)
 roles, networks = provider.init()
 roles = en.sync_info(roles, networks)
+print(roles)
 
 subnet = networks["my_subnet"]
 cp = 1
@@ -47,14 +48,14 @@ w=3
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
     .add_machine(
-        # roles=["cp"],
+        roles=["cp"],
         number=cp,
         undercloud=roles["role0"],
         flavour_desc={"core": 16, "mem": 32768},
         macs=list(subnet[0].free_macs)[0:1],
     )
     .add_machine(
-        # roles=["member"],
+        roles=["member"],
         number=w,
         undercloud=roles["role1"],
         flavour_desc={"core": 2, "mem": 4096},
@@ -77,7 +78,7 @@ run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
 f = open("node_list", 'a')
 f.write(str(master_nodes[0]))
 f.write("\n")
-f.close
+f.close()
 
 print("Master nodes ........")
 print(master_nodes)
