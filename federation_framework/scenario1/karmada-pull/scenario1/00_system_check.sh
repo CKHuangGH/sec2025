@@ -3,6 +3,8 @@ kubectl get pod -A --context cluster1
 
 cp ../node_list node_list
 cp ../node_list_all node_list_all
+cp ../node_list node_list
+cp ../node_list_all node_list_all
 
 input_file="node_list_all"
 output_file="node_exec"
