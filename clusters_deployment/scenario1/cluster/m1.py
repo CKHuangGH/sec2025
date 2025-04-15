@@ -3,8 +3,7 @@ from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
 import time
 import enoslib as en
-import logging
-en.init_logging(level=logging.debug)
+
 en.set_config(ansible_forks=100)
 
 name = "s1-member-1"
@@ -30,10 +29,10 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["role0"], cluster=clusters, nodes=1, primary_network=prod_network,servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
+    roles=["role0"], cluster=clusters, nodes=1, primary_network=prod_network
     )
     .add_machine(
-    roles=["role1"], cluster=clusters, nodes=1, primary_network=prod_network,servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
+    roles=["role1"], cluster=clusters, nodes=1, primary_network=prod_network
     )
     .finalize()
 )
@@ -60,8 +59,7 @@ virt_conf = (
         undercloud=roles["role1"],
         flavour_desc={"core": 2, "mem": 4096},
         macs=list(subnet[0].free_macs)[1:w+1],
-    )
-    .finalize()
+    ).finalize()
 )
 
 vmroles = en.start_virtualmachines(virt_conf)
