@@ -8,41 +8,61 @@ en.set_config(ansible_forks=100)
 
 name = "s1-management-1"
 
-clusters = ["ecotype"]
+clusters = "ecotype"
+
+site = "nantes"
 
 master_nodes = []
 
 duration = "12:00:00"
 
-for i in range(0, len(clusters)):
+prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 
-    name_job = name + clusters[i] + str(i)
+name_job = name + clusters
 
-    role_name = "cluster" + str(clusters[i])
-    
-    conf = Configuration.from_settings(job_name=name_job,
-                                       walltime=duration,
-                                       image="/home/chuang/images/debian31032025.qcow2")\
-                        .add_machine(roles=[role_name],
-                                     cluster=clusters[i],
-                                     flavour_desc={"core": 16, "mem": 32768},
-                                     number=1)\
-                        .finalize()
-    
-    provider = VMonG5k(conf)
-    
-    roles, networks = provider.init()
+role_name = "cluster" + str(clusters)
 
-    inventory_file = "kubefed_inventory_cluster" + str(name_job) + ".ini" 
+conf = (
+    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration)
+    .add_network_conf(prod_network)
+    .add_network(
+        id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
+    )
+    .add_machine(
+    roles=["role0"], cluster=clusters, nodes=1, primary_network=prod_network,servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
+    )
+    .finalize()
+)
+provider = en.G5k(conf)
+roles, networks = provider.init()
+roles = en.sync_info(roles, networks)
 
-    inventory = generate_inventory(roles, networks, inventory_file)
+subnet = networks["my_subnet"]
+cp = 1
 
-    master_nodes.append(roles[role_name][0].address)
+virt_conf = (
+    en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
+    .add_machine(
+        roles=["cp"],
+        number=cp,
+        undercloud=roles["role0"],
+        flavour_desc={"core": 16, "mem": 32768},
+        macs=list(subnet[0].free_macs)[0:1],
+    ).finalize()
+)
 
-    time.sleep(45)
+vmroles = en.start_virtualmachines(virt_conf)
 
-    run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
-    
+inventory_file = "kubefed_inventory_cluster"+ str(name_job) +".ini" 
+
+inventory = generate_inventory(vmroles, networks, inventory_file)
+
+master_nodes.append(vmroles['cp'][0].address)
+
+time.sleep(45)
+
+run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
+
 f = open("node_list", 'a')
 f.write(str(master_nodes[0]))
 f.write("\n")

@@ -1,30 +1,37 @@
 from enoslib.api import generate_inventory,run_ansible
 from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
+import time
+import enoslib as en
 
+en.set_config(ansible_forks=100)
 
 name = "s1-management-1"
 
-clusters = ["ecotype"]
+clusters = "ecotype"
+
+site = "nantes"
 
 master_nodes = []
 
-duration = "04:00:00"
+duration = "12:00:00"
 
+prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 
-for i in range(0, len(clusters)):
+name_job = name + clusters
 
-    name_job = name + clusters[i] + str(i)
+role_name = "cluster" + str(clusters)
 
-    role_name = "cluster" + str(clusters[i])
-    
-    conf = Configuration.from_settings(job_name=name_job,
-                                       walltime=duration,
-                                       image="/grid5000/virt-images/ubuntu2004-x64-min-2022032913.qcow2")\
-                        .add_machine(roles=[role_name],
-                                     cluster=clusters[i],
-                                     flavour_desc={"core": 4, "mem": 16384},
-                                     number=2)\
-                        .finalize()
-    provider = VMonG5k(conf)
-    provider.destroy()
+conf = (
+    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration)
+    .add_network_conf(prod_network)
+    .add_network(
+        id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
+    )
+    .add_machine(
+    roles=["role0"], cluster=clusters, nodes=1, primary_network=prod_network,servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
+    )
+    .finalize()
+)
+provider = en.G5k(conf)
+provider.destroy()
