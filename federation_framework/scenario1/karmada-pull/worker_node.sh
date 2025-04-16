@@ -4,6 +4,7 @@ cluster=$1
 sudo systemctl stop ntp
 sudo ntpd -gq
 sudo systemctl start ntp
+pip3 install kubernetes --break-system-packages
 
 kubectl config use-context cluster$cluster
 helm repo update

@@ -3,6 +3,7 @@ number=$1
 sudo systemctl stop ntp
 sudo ntpd -gq
 sudo systemctl start ntp
+pip3 install kubernetes --break-system-packages
 
 for i in `seq 0 $number`
 do
