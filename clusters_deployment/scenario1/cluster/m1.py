@@ -29,10 +29,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["cp"], cluster=clusters, nodes=1, primary_network=prod_network, servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 5)],
-    )
-    .add_machine(
-    roles=["member"], cluster=clusters, nodes=1, primary_network=prod_network, servers=[f"ecotype-{j}.nantes.grid5000.fr" for j in range(5, 47)],
+    roles=["server"], cluster=clusters, nodes=2, primary_network=prod_network, servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)],
     )
     .finalize()
 )
@@ -50,14 +47,14 @@ virt_conf = (
     .add_machine(
         roles=["cp"],
         number=cp,
-        undercloud=roles["cp"],
+        undercloud=roles["server"],
         flavour_desc={"core": 16, "mem": 32768},
         macs=list(subnet[0].free_macs)[0:1],
     )
     .add_machine(
         roles=["member"],
         number=w,
-        undercloud=roles["member"],
+        undercloud=roles["server"],
         flavour_desc={"core": 2, "mem": 4096},
         macs=list(subnet[0].free_macs)[1:w+1],
     ).finalize()
