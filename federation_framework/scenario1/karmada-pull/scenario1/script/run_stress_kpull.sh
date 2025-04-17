@@ -1,10 +1,9 @@
 number=$1
-SCRIPT_PATH="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_kpull.sh"
+SCRIPT_PATH="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_kpull.py"
 NAMESPACE="default"
 POD_THRESHOLD=$((number * 11))
 SVC_THRESHOLD=$((number * 11)+1)
 SA_THRESHOLD=$((number * 11))
-OUTPUT_LOG="/root/"
 
 
 while read -r ip; do
@@ -29,7 +28,6 @@ do
       --pod-threshold $POD_THRESHOLD \
       --svc-threshold $SVC_THRESHOLD \
       --sa-threshold $SA_THRESHOLD \
-      --output-file $OUTPUT_LOG \
     > /dev/null 2>&1 &" < /dev/null
 done
 
@@ -38,3 +36,5 @@ for (( i=900; i>0; i-- )); do
     echo -ne "\r$i secs remaining..."
     sleep 1
 done
+
+python3 getmetrics.py

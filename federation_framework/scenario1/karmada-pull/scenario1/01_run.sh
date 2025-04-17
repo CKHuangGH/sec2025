@@ -5,15 +5,15 @@ for (( times=0; times<10; times++ )); do
     sleep 30
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
     mkdir results
-    . ./02_run_stress_kpull.sh $number
-    . ./03.getdocker.sh $number $times
+    . ./script/run_stress_kpull.sh $number
+    . ./script/getdocker.sh $number $times
     sleep 30
     . ./script/r$number.sh
     sleep 30
     . ./reset.sh
     for ip in $(cat node_exec)
     do 
-	    ssh root@$ip . /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/reset_worker.sh
+	    ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
     done
     rm -rf results
     sleep 30
