@@ -6,10 +6,10 @@ for (( times=0; times<10; times++ )); do
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
     mkdir results
     . ./script/run_stress_kpull.sh $number
+    sleep 30
+    . ./script/delete.sh $number
+    sleep 30
     . ./script/getdocker.sh $number $times
-    sleep 30
-    . ./script/r$number.sh
-    sleep 30
     . ./reset.sh
     for ip in $(cat node_exec)
     do 

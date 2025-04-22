@@ -2,7 +2,7 @@ number=$1
 SCRIPT_PATH="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_kpull.py"
 NAMESPACE="default"
 POD_THRESHOLD=$((number * 11))
-SVC_THRESHOLD=$((number * 11)+1)
+SVC_THRESHOLD=$(( number * 11 + 1 ))
 SA_THRESHOLD=$((number * 11))
 
 
@@ -15,8 +15,7 @@ done < "node_list"
 
 echo $number
 echo $number >> number.txt
-echo "start deployment" >> number.txt
-echo $(date +'%s.%N') >> number.txt
+echo "start deployment $(date +'%s.%N')" >> number.txt
 
 sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp' >> cross &
 

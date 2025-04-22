@@ -4,6 +4,7 @@ sudo systemctl stop ntp
 sudo ntpd -gq
 sudo systemctl start ntp
 pip3 install kubernetes --break-system-packages
+sudo apt install tcpdump -y
 
 for i in `seq 0 $number`
 do
@@ -62,7 +63,7 @@ while IFS= read -r ip_address; do
     for image in /root/images_system/*.tar; do
       ctr -n k8s.io images import \"\$image\"
     done
-  '" </dev/null &
+  '" </dev/null
 done < "node_ip"
 
 cd /root/karmada_package

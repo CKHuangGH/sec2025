@@ -1,7 +1,8 @@
 import socket
 import requests
 import csv
-from datetime import datetime, timedelta
+import re
+from datetime import datetime
 
 def get_local_ip():
     """Get the local (non-loopback) IP address, typically used in LAN environments"""
@@ -12,6 +13,19 @@ def get_local_ip():
     finally:
         s.close()
     return ip
+
+def read_start_deployment_timestamp(filename="number.txt"):
+    """
+    讀取檔案中類似 '#start deployment 1713771466.123456789' 的行，
+    回傳 float 格式的 timestamp
+    """
+    pattern = re.compile(r"#start deployment\s+(\d+\.\d+)")
+    with open(filename, "r") as f:
+        for line in f:
+            m = pattern.search(line)
+            if m:
+                return float(m.group(1))
+    raise ValueError(f"找不到 '#start deployment ...' 的時間戳 in {filename}")
 
 # Get the local IP address, assuming Prometheus is running on this machine
 local_ip = get_local_ip()
@@ -42,13 +56,13 @@ def query_prometheus_range(query, start, end, step):
         print("Error querying Prometheus:", response.status_code, response.text)
         return []
 
+# --------------- 主要修改點：從 number.txt 讀取開始時間 ---------------
+start_ts = read_start_deployment_timestamp("number.txt")
+end_ts = datetime.now().timestamp()
+# ----------------------------------------------------------------------------
+
 cpu_query = 'rate(container_cpu_usage_seconds_total{container!=""}[1m])'
 memory_query = 'container_memory_working_set_bytes{container!=""}'
-
-end_time = datetime.now()
-start_time = end_time - timedelta(minutes=20)
-start_ts = start_time.timestamp()
-end_ts = end_time.timestamp()
 step = "10"  # Interval of 10 seconds between data points
 
 # Query CPU and memory metrics
@@ -56,7 +70,6 @@ cpu_results = query_prometheus_range(cpu_query, start_ts, end_ts, step)
 memory_results = query_prometheus_range(memory_query, start_ts, end_ts, step)
 
 # Parse CPU data: convert to millicores (m)
-# Use key as (namespace, pod, timestamp)
 cpu_dict = {}
 for series in cpu_results:
     pod = series['metric'].get('pod', 'N/A')
@@ -64,7 +77,7 @@ for series in cpu_results:
     for t, value in series['values']:
         try:
             cpu_dict[(namespace, pod, t)] = float(value) * 1000  # cores → millicores
-        except Exception as e:
+        except Exception:
             cpu_dict[(namespace, pod, t)] = None
 
 # Parse memory data: convert to MiB
@@ -75,7 +88,7 @@ for series in memory_results:
     for t, value in series['values']:
         try:
             mem_dict[(namespace, pod, t)] = float(value) / (1024**2)  # bytes → MiB
-        except Exception as e:
+        except Exception:
             mem_dict[(namespace, pod, t)] = None
 
 # Merge CPU and memory data using union of all (namespace, pod, timestamp) combinations
