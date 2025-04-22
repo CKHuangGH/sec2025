@@ -18,6 +18,10 @@ echo $number >> number.txt
 echo "start deployment" >> number.txt
 echo $(date +'%s.%N') >> number.txt
 
+sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp' >> cross &
+
+sleep 120
+
 . ./script/$number.sh > /dev/null 2>&1 &
 
 for ip in $(cat node_exec)
@@ -33,8 +37,11 @@ done
 
 echo "wait for 900 secs"
 for (( i=900; i>0; i-- )); do
-    echo -ne "\r$i secs remaining..."
+    printf "\r%4d secs remaining..." "$i"
     sleep 1
 done
 
-python3 getmetrics.py
+python3 getmetrics_cpuram_time.py
+python3 getmetrics_cpuram_average10.py
+
+. ./script/copy.sh

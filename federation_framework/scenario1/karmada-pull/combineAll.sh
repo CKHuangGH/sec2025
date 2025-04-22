@@ -40,26 +40,26 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 ip=$(cat node_list)
 
 > node_ip
-for i in {1..101}; do
+for i in {1..5}; do
   new_ip=$(echo "$ip" | sed "s/\.[0-9]*$/.${i}/")
   echo "$new_ip" >> node_ip
 done
 
 while IFS= read -r ip_address; do
   echo "Send to $ip_address..."
-  scp -o StrictHostKeyChecking=no /root/karmada_package/docker_io_karmada_karmada_agent_v1_12_3.tar root@$ip_address:/root/
+  scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/
   scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/
-  scp -o StrictHostKeyChecking=no -r /root/images_all/ root@$ip_address:/root/
+  scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/
 done < "node_ip"
 
 while IFS= read -r ip_address; do
   echo "Import to $ip_address..."
   ssh -o StrictHostKeyChecking=no root@$ip_address bash -c "'
-    ctr -n k8s.io images import /root/docker_io_karmada_karmada_agent_v1_12_3.tar
+    ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar
     for image in /root/images_google/*.tar; do
       ctr -n k8s.io images import \"\$image\"
     done
-    for image in /root/images_all/*.tar; do
+    for image in /root/images_system/*.tar; do
       ctr -n k8s.io images import \"\$image\"
     done
   '" </dev/null &
@@ -74,7 +74,7 @@ for image in *.tar *.tar.gz; do
     fi
 done
 
-cd /root/images_all
+cd /root/images_system
 
 for image in *.tar *.tar.gz; do
     if [ -f "$image" ]; then

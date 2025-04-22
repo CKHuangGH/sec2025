@@ -42,11 +42,9 @@ def query_prometheus_range(query, start, end, step):
         print("Error querying Prometheus:", response.status_code, response.text)
         return []
 
-# Modify query: remove namespace="karmada-system" to include data from all namespaces
 cpu_query = 'rate(container_cpu_usage_seconds_total{container!=""}[1m])'
 memory_query = 'container_memory_working_set_bytes{container!=""}'
 
-# Define time range: fetch the past 20 minutes with one data point every 10 seconds
 end_time = datetime.now()
 start_time = end_time - timedelta(minutes=20)
 start_ts = start_time.timestamp()

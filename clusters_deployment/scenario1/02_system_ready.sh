@@ -26,7 +26,7 @@ done
 
 scp -r /home/chuang/addon root@$manage:/root/
 scp -r /home/chuang/karmada_package root@$manage:/root/
-scp -r /home/chuang/images_all root@$manage:/root/
+scp -r /home/chuang/images_system root@$manage:/root/
 scp -r /home/chuang/images_google root@$manage:/root/
 # scp -r /home/chuang/ocm_package root@$manage:/root/
 
