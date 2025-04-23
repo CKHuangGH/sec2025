@@ -1,6 +1,7 @@
 #!/bin/bash
 cluster=$1
 
+mkdir /var/log/ntpsec
 sudo systemctl stop ntp
 sudo ntpd -gq
 sudo systemctl start ntp

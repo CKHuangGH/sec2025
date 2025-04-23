@@ -15,17 +15,13 @@ def get_local_ip():
     return ip
 
 def read_start_deployment_timestamp(filename="number.txt"):
-    """
-    讀取檔案中類似 '#start deployment 1713771466.123456789' 的行，
-    回傳 float 格式的 timestamp
-    """
-    pattern = re.compile(r"#start deployment\s+(\d+\.\d+)")
+    pattern = re.compile(r"start deployment\s+(\d+\.\d+)")
     with open(filename, "r") as f:
         for line in f:
             m = pattern.search(line)
             if m:
                 return float(m.group(1))
-    raise ValueError(f"找不到 '#start deployment ...' 的時間戳 in {filename}")
+    raise ValueError(f"no information in {filename}")
 
 # Get the local IP address, assuming Prometheus is running on this machine
 local_ip = get_local_ip()
@@ -56,14 +52,12 @@ def query_prometheus_range(query, start, end, step):
         print("Error querying Prometheus:", response.status_code, response.text)
         return []
 
-# --------------- 主要修改點：從 number.txt 讀取開始時間 ---------------
 start_ts = read_start_deployment_timestamp("number.txt")
 end_ts = datetime.now().timestamp()
-# ----------------------------------------------------------------------------
 
-cpu_query = 'rate(container_cpu_usage_seconds_total{container!=""}[1m])'
-memory_query = 'container_memory_working_set_bytes{container!=""}'
-step = "10"  # Interval of 10 seconds between data points
+cpu_query = 'rate(container_cpu_usage_seconds_total{container!="",pod!=""[1m])'
+memory_query = 'container_memory_working_set_bytes{container!="",pod!=""}'
+step = "5"  # Interval of 10 seconds between data points
 
 # Query CPU and memory metrics
 cpu_results = query_prometheus_range(cpu_query, start_ts, end_ts, step)
@@ -95,7 +89,7 @@ for series in memory_results:
 all_keys = set(cpu_dict.keys()) | set(mem_dict.keys())
 
 # Write data to CSV: columns include Unix timestamp, namespace, pod, cpu_m, memory_MiB
-csv_file = "metrics_20min_dense.csv"
+csv_file = "resource_all.csv"
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["timestamp", "namespace", "pod", "cpu_m", "memory_MiB"])

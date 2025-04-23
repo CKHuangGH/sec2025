@@ -3,10 +3,16 @@ time=$2
 j=1
 
 for i in $(cat node_exec)
-do 
+do
+	ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh
 	scp root@$i:/root/kubetopPodWA.csv /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/results/kubetopPodWA.csv
 	j=$((j+1))	
 done
+
+. ./script/copy.sh
+
+
+
 mv kubetopPodHUB.csv /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/results/kubetopPodHUB.csv
 mv cross /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/results/cross
 mv number.txt /root/edgesys-2025/federation_framework/scenario1/karmada-pull/scenario1/results/number.txt

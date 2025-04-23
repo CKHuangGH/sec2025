@@ -18,3 +18,14 @@ for (( times=0; times<10; times++ )); do
     rm -rf results
     sleep 30
 done
+
+. ./script/copy.sh $number
+
+for ip in $(cat node_exec)
+do
+	ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh $number
+	scp root@$ip:/root/ /root/prom-$number/
+	j=$((j+1))	
+done
+
+scp -o StrictHostKeyChecking=no -r /root/prom-$number/ chuang@172.16.207.100:/home/chuang/results$number-karmada-pull

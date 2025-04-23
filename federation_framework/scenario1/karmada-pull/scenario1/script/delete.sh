@@ -5,15 +5,14 @@ POD_THRESHOLD=0
 SVC_THRESHOLD=1
 SA_THRESHOLD=0
 
-for ip in $(cat node_exec)
-do 
+for ip in $(cat node_exec); do 
   ssh -o LogLevel=ERROR root@"$ip" "\
-    nohup python3 $SCRIPT_PATH \
+    python3 $SCRIPT_PATH \
       --namespace $NAMESPACE \
       --pod-threshold $POD_THRESHOLD \
       --svc-threshold $SVC_THRESHOLD \
       --sa-threshold $SA_THRESHOLD \
-    > /dev/null 2>&1 &" < /dev/null
+  "
 done
 
 . ./script/r$number.sh

@@ -1,10 +1,10 @@
 #!/bin/bash
-
+number=$1
 # Automatically retrieve the IP address of network interface ens3 (excluding 127.0.0.1)
 PROMETHEUS_IP=$(ip -4 addr show ens3 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 PROMETHEUS_PORT=30090
 NAMESPACE=monitoring
-EXPORT_DIR=./prometheus-snapshot
+EXPORT_DIR=/root/prom-$number/prometheus-snapshot-$PROMETHEUS_IP
 
 # Verify that the IP address was successfully retrieved
 if [ -z "$PROMETHEUS_IP" ]; then

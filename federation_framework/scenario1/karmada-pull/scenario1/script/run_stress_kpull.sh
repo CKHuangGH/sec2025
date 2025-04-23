@@ -17,21 +17,20 @@ echo $number
 echo $number >> number.txt
 echo "start deployment $(date +'%s.%N')" >> number.txt
 
-sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp' >> cross &
+sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
 
 sleep 120
 
 . ./script/$number.sh > /dev/null 2>&1 &
 
-for ip in $(cat node_exec)
-do 
+for ip in $(cat node_exec); do 
   ssh -o LogLevel=ERROR root@"$ip" "\
-    nohup python3 $SCRIPT_PATH \
+    python3 $SCRIPT_PATH \
       --namespace $NAMESPACE \
       --pod-threshold $POD_THRESHOLD \
       --svc-threshold $SVC_THRESHOLD \
       --sa-threshold $SA_THRESHOLD \
-    > /dev/null 2>&1 &" < /dev/null
+  "
 done
 
 echo "wait for 900 secs"
@@ -41,6 +40,5 @@ for (( i=900; i>0; i-- )); do
 done
 
 python3 getmetrics_cpuram_time.py
+echo "time get average $(date +'%s.%N')" >> number.txt
 python3 getmetrics_cpuram_average10.py
-
-. ./script/copy.sh
