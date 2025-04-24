@@ -49,23 +49,40 @@ done
 
 while IFS= read -r ip_address; do
   echo "Send to $ip_address..."
-  scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/
-  scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/
-  scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/
+  scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/ &
 done < "node_ip"
+
+wait
+
+MAX_PARALLEL=50
+current_jobs=0
 
 while IFS= read -r ip_address; do
   echo "Import to $ip_address..."
   ssh -o StrictHostKeyChecking=no root@$ip_address bash -c "'
-    ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar
+    ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar  &
     for image in /root/images_google/*.tar; do
-      ctr -n k8s.io images import \"\$image\"
+      ctr -n k8s.io images import \"\$image\"  &
     done
     for image in /root/images_system/*.tar; do
-      ctr -n k8s.io images import \"\$image\"
+      ctr -n k8s.io images import \"\$image\"  &
     done
-  '" </dev/null
+    wait
+  '" </dev/null &
+
+  current_jobs=$((current_jobs + 1))
+
+  if [ "$current_jobs" -ge "$MAX_PARALLEL" ]; then
+    wait -n
+    current_jobs=$((current_jobs - 1))
+  fi
 done < "node_ip"
+
+wait
+
+echo "All imports done on all nodes!"
 
 cd /root/karmada_package
 

@@ -1,7 +1,6 @@
 from enoslib.api import generate_inventory,run_ansible
 from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
-import time
 import enoslib as en
 
 en.set_config(ansible_forks=100)

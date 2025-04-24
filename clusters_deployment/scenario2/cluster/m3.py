@@ -6,7 +6,7 @@ import enoslib as en
 
 en.set_config(ansible_forks=100)
 
-name = "s2-management-1"
+name = "s2-member-3"
 
 clusters = "ecotype"
 
@@ -38,35 +38,40 @@ roles, networks = provider.init()
 roles = en.sync_info(roles, networks)
 
 subnet = networks["my_subnet"]
-cp = 1
 
-virt_conf = (
-    en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
-    .add_machine(
-        roles=["cp"],
-        number=cp,
-        undercloud=roles["role0"],
-        flavour_desc={"core": 16, "mem": 32768},
-        macs=list(subnet[0].free_macs)[0:1],
-    ).finalize()
-)
+for i in range(0,10):
+    virt_conf = (
+        en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
+        .add_machine(
+            roles=["cp"],
+            number=1,
+            undercloud=roles["role0"],
+            flavour_desc={"core": 2, "mem": 4096},
+            macs=list(subnet[0].free_macs)[i:i+1],
+        ).finalize()
+    )
 
-vmroles = en.start_virtualmachines(virt_conf)
+    vmroles = en.start_virtualmachines(virt_conf)
 
-inventory_file = "kubefed_inventory_cluster"+ str(name_job) +".ini" 
+    print(vmroles)
 
-inventory = generate_inventory(vmroles, networks, inventory_file)
+    #print(networks)
+    tempname=name_job+str(i)
 
-master_nodes.append(vmroles['cp'][0].address)
+    inventory_file = "kubefed_inventory_cluster"+ str(tempname) +".ini" 
 
-time.sleep(45)
+    inventory = generate_inventory(vmroles, networks, inventory_file)
 
-run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
+    master_nodes.append(vmroles["cp"][0].address)
+
+    # Make sure k8s is not already running
+    #run_ansible(["reset_k8s.yml"], inventory_path=inventory_file)
+    time.sleep(45)
+    # Deploy k8s and dependencies
+    run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
 
 f = open("node_list", 'a')
-f.write(str(master_nodes[0]))
-f.write("\n")
-f.close()
-
-print("Master nodes ........")
-print(master_nodes)
+for i in range(0,10):
+    f.write(str(master_nodes[i]))
+    f.write("\n")
+f.close

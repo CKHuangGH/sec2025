@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -f /root/time.txt
+
 rm -f /root/resource_all.csv
 
 rm -f /root/resource_avg_10min.csv

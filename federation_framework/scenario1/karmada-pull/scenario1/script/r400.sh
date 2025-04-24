@@ -3,5 +3,4 @@ for ((i=1; i<=400; i++)); do
   envsubst < ./script/google_demo.yaml | kubectl delete --kubeconfig /etc/karmada/karmada-apiserver.config -f -
 done
 
-echo "All $i deployments deleted." >> number.txt
-date +'%s.%N' >> number.txt
+echo "cleanup timestamps $(date +'%s.%N')" >> number.txt
