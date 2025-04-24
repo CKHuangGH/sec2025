@@ -10,3 +10,6 @@ for ip in $(cat node_exec); do
 done
 
 bash ./script/r$number.sh
+for ip in $(cat node_exec); do 
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "cleanup timestamps"
+done
