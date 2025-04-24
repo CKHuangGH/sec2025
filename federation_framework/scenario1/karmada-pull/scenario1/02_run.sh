@@ -12,10 +12,10 @@ for (( times=0; times<10; times++ )); do
     bash ./script/delete.sh $number
     sleep 30
     bash ./script/getdocker.sh $number $times
-    bash ./reset.sh
+    bash ./script/reset.sh
     for ip in $(cat node_exec)
     do 
-	    ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
+	    ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
     done
     rm -rf results
     sleep 30
@@ -25,7 +25,7 @@ bash ./script/copy.sh $number
 
 for ip in $(cat node_exec)
 do
-	ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh $number
+	ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh $number
 	scp root@$ip:/root/prom-$number/ /root/prom-$number/
 	j=$((j+1))	
 done

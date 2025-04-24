@@ -5,7 +5,7 @@ SLEEP_INTERVAL=1
 
 while true; do
     running_pods=$(kubectl get sa --no-headers --context cluster1 | wc -l)
-    echo "pods: "$running_pods
+    echo "sa: "$running_pods
     if [ "$running_pods" -eq "$numberofsa" ]; then
         current_time=$(date +'%s.%N')
         echo timeforsadel $current_time >> time.txt
