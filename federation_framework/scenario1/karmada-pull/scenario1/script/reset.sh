@@ -17,6 +17,8 @@ echo "y" | kubectl karmada deinit
 
 rm -rf /var/lib/karmada-etcd
 
+rm -f /root/number.txt
+
 rm -f ../number.txt
 
 rm -f ../cross

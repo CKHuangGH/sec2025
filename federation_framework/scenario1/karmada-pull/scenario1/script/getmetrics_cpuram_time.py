@@ -14,7 +14,7 @@ def get_local_ip():
         s.close()
     return ip
 
-def read_start_deployment_timestamp(filename="number.txt"):
+def read_start_deployment_timestamp(filename="/root/number.txt"):
     pattern = re.compile(r"start deployment\s+(\d+\.\d+)")
     with open(filename, "r") as f:
         for line in f:

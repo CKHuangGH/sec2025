@@ -14,8 +14,13 @@ done < "node_list"
 echo $number
 echo $number >> number.txt
 echo "start deployment $(date +'%s.%N')" >> number.txt
+cp number.txt /root/number.txt
 
 sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
+
+for ip in $(cat node_exec); do 
+  scp number.txt root@$ip:/root/
+done
 
 sleep 120
 
@@ -33,9 +38,9 @@ for (( i=900; i>0; i-- )); do
     sleep 1
 done
 
-python3 getmetrics_cpuram_time.py
+python3 ./script/getmetrics_cpuram_time.py
 echo "time get average $(date +'%s.%N')" >> number.txt
-python3 getmetrics_cpuram_average10.py
+python3 ./script/getmetrics_cpuram_average10.py
 
 for ip in $(cat node_exec); do 
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time.py
