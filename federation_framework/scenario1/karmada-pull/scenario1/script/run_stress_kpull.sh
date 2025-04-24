@@ -1,6 +1,4 @@
 number=$1
-SCRIPT_PATH="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_kpull.py"
-NAMESPACE="default"
 POD_THRESHOLD=$((number * 11))
 SVC_THRESHOLD=$(( number * 11 + 1 ))
 SA_THRESHOLD=$((number * 11))
@@ -21,16 +19,12 @@ sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) a
 
 sleep 120
 
-. ./script/$number.sh > /dev/null 2>&1 &
+bash ./script/$number.sh > /dev/null 2>&1 &
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@"$ip" "\
-    python3 $SCRIPT_PATH \
-      --namespace $NAMESPACE \
-      --pod-threshold $POD_THRESHOLD \
-      --svc-threshold $SVC_THRESHOLD \
-      --sa-threshold $SA_THRESHOLD \
-  "
+  ssh -o LogLevel=ERROR root@$ip bash ./checking_svc.sh $SVC_THRESHOLD &
+  ssh -o LogLevel=ERROR root@$ip bash ./checking_sa.sh $SA_THRESHOLD &
+  ssh -o LogLevel=ERROR root@$ip bash ./checking_pod.sh $POD_THRESHOLD
 done
 
 echo "wait for 900 secs"
@@ -42,3 +36,8 @@ done
 python3 getmetrics_cpuram_time.py
 echo "time get average $(date +'%s.%N')" >> number.txt
 python3 getmetrics_cpuram_average10.py
+
+for ip in $(cat node_exec); do 
+  ssh -o LogLevel=ERROR root@$ip python3 getmetrics_cpuram_time.py
+  ssh -o LogLevel=ERROR root@$ip python3 getmetrics_cpuram_average10.py
+done

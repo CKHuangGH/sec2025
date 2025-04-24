@@ -1,17 +1,8 @@
 #!/bin/bash
 
-echo "Searching for and terminating bash-related processes..."
-PIDS=$(pgrep -f "toppodwa")
+rm -f /root/resource_all.csv
 
-if [ -n "$PIDS" ]; then
-    echo "Found the following processes: $PIDS"
-    kill -9 $PIDS
-    echo "All bash processes have been terminated."
-else
-    echo "No bash processes found."
-fi
-
-rm -f kubetopPodWA.csv
+rm -f /root/resource_avg_10min.csv
 
 rm -f /etc/karmada/karmada-agent.conf
 

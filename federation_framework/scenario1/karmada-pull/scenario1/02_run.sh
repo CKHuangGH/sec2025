@@ -1,16 +1,18 @@
+#!/bin/bash
+
 read -p "please enter the test number(200, 400, 600, 800, 1000): " number
 
 for (( times=0; times<10; times++ )); do
-    . ./script/init_reg.sh
+    bash ./script/init_reg.sh
     sleep 30
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
     mkdir results
-    . ./script/run_stress_kpull.sh $number
+    bash ./script/run_stress_kpull.sh $number
     sleep 30
-    . ./script/delete.sh $number
+    bash ./script/delete.sh $number
     sleep 30
-    . ./script/getdocker.sh $number $times
-    . ./reset.sh
+    bash ./script/getdocker.sh $number $times
+    bash ./reset.sh
     for ip in $(cat node_exec)
     do 
 	    ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
@@ -19,12 +21,12 @@ for (( times=0; times<10; times++ )); do
     sleep 30
 done
 
-. ./script/copy.sh $number
+bash ./script/copy.sh $number
 
 for ip in $(cat node_exec)
 do
 	ssh root@$ip . /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh $number
-	scp root@$ip:/root/ /root/prom-$number/
+	scp root@$ip:/root/prom-$number/ /root/prom-$number/
 	j=$((j+1))	
 done
 

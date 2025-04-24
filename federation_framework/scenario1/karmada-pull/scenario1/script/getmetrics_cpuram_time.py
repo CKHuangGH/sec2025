@@ -89,7 +89,7 @@ for series in memory_results:
 all_keys = set(cpu_dict.keys()) | set(mem_dict.keys())
 
 # Write data to CSV: columns include Unix timestamp, namespace, pod, cpu_m, memory_MiB
-csv_file = "resource_all.csv"
+csv_file = "/root/resource_all.csv"
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["timestamp", "namespace", "pod", "cpu_m", "memory_MiB"])

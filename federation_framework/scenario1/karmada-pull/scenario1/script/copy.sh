@@ -4,7 +4,7 @@ number=$1
 PROMETHEUS_IP=$(ip -4 addr show ens3 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 PROMETHEUS_PORT=30090
 NAMESPACE=monitoring
-EXPORT_DIR=/root/prom-$number/prometheus-snapshot-$PROMETHEUS_IP
+EXPORT_DIR=/root/prom-$number/prometheus-snapshot
 
 # Verify that the IP address was successfully retrieved
 if [ -z "$PROMETHEUS_IP" ]; then
