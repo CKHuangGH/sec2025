@@ -55,7 +55,7 @@ def query_prometheus_range(query, start, end, step):
 start_ts = read_start_deployment_timestamp("number.txt")
 end_ts = datetime.now().timestamp()
 
-cpu_query = 'rate(container_cpu_usage_seconds_total{container!="",pod!=""[1m])'
+cpu_query = 'rate(container_cpu_usage_seconds_total{container!="", pod!=""}[1m])'
 memory_query = 'container_memory_working_set_bytes{container!="",pod!=""}'
 step = "5"  # Interval of 10 seconds between data points
 
