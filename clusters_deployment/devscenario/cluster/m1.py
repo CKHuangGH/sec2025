@@ -3,6 +3,7 @@ from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
 import time
 import enoslib as en
+from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
@@ -17,6 +18,10 @@ master_nodes = []
 duration = "12:00:00"
 
 prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
+
+today = datetime.now().strftime("%Y-%m-%d")
+
+reservation_time = today + " 17:01:00"
 
 name_job = name + clusters
 

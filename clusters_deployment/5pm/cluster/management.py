@@ -28,7 +28,7 @@ name_job = name + clusters
 role_name = "cluster" + str(clusters)
 
 conf = (
-    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration)
+    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration, reservation=reservation_time)
     .add_network_conf(prod_network)
     .add_network(
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site

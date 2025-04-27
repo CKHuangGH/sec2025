@@ -22,6 +22,7 @@ cp ./number.txt /root/number.txt
 
 for ip in $(cat node_exec); do 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "start deployment"
+  sleep 1
   ssh root@$ip cp /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/time.txt /root/time.txt
 done
 
