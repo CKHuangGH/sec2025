@@ -29,7 +29,7 @@ rm -f /root/resource_avg_10min.csv
 
 while true; do
     running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
-    echo "svc: $running_pods"
+    echo "Karmada CP pod: $running_pods"
     if [ "$running_pods" -eq 0 ]; then
         break
     else

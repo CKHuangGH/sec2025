@@ -11,3 +11,13 @@ rm -f /root/resource_avg_10min.csv
 rm -f /etc/karmada/karmada-agent.conf
 
 rm -f /etc/karmada/pki/ca.crt
+
+while true; do
+    running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
+    echo "Karmada CP pod: $running_pods"
+    if [ "$running_pods" -eq 0 ]; then
+        break
+    else
+        sleep 1
+    fi
+done

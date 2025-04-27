@@ -1,5 +1,5 @@
 number=$1
-POD_THRESHOLD=$((number * 11))
+POD_THRESHOLD=$(( number * 11 ))
 SVC_THRESHOLD=$(( number * 11 + 1 ))
 SA_THRESHOLD=$(( number * 11 - 1 ))
 
@@ -22,8 +22,6 @@ cp ./number.txt /root/number.txt
 
 for ip in $(cat node_exec); do 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "start deployment"
-  sleep 1
-  ssh root@$ip cp /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/time.txt /root/time.txt
 done
 
 bash ./script/$number.sh > /dev/null 2>&1 &
@@ -41,11 +39,7 @@ for (( i=900; i>0; i-- )); do
 done
 
 python3 ./script/getmetrics_cpuram_time.py
-echo "time get average $(date +'%s.%N')" >> number.txt
-python3 ./script/getmetrics_cpuram_average10.py
 
 for ip in $(cat node_exec); do 
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py
-  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "time get average"
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py
 done
