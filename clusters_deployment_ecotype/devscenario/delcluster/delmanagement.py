@@ -7,9 +7,9 @@ en.set_config(ansible_forks=100)
 
 name = "devs1-management-1"
 
-clusters = "gros"
+clusters = "ecotype"
 
-site = "nancy"
+site = "nantes"
 
 master_nodes = []
 

@@ -8,9 +8,9 @@ en.set_config(ansible_forks=100)
 
 name = "s1-member-1"
 
-clusters = "ecotype"
+clusters = "gros"
 
-site = "nantes"
+site = "nancy"
 
 master_nodes = []
 

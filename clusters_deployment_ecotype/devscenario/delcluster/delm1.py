@@ -3,11 +3,11 @@ from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
 import enoslib as en
 
-name = "s1-member-1"
+name = "devs1-member-1"
 
-clusters = "gros"
+clusters = "ecotype"
 
-site = "nancy"
+site = "nantes"
 
 master_nodes = []
 

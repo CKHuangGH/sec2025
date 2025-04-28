@@ -5,9 +5,9 @@ import enoslib as en
 
 name = "devs1-member-1"
 
-clusters = "ecotype"
+clusters = "gros"
 
-site = "nantes"
+site = "nancy"
 
 master_nodes = []
 
