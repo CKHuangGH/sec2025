@@ -42,7 +42,7 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 ip=$(cat node_list)
 
 > node_ip
-for i in {1..102}; do
+for i in {1..201}; do
   new_ip=$(echo "$ip" | sed "s/\.[0-9]*$/.${i}/")
   echo "$new_ip" >> node_ip
 done

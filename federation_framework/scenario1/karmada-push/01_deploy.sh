@@ -4,6 +4,6 @@ ls /root/.kube/
 echo $(( $(ls -1 /root/.kube/ | wc -l) - 2 ))
 read -p "please enter the last cluster number in .kube: " number
 
-./patch.sh
+# ./patch.sh
 
 ./combineAll.sh $number

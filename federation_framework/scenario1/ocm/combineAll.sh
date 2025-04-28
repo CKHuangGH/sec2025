@@ -1,12 +1,11 @@
 number=$1
 
-sudo rm -rf /usr/bin/kubectl
-
-sudo curl -LO https://dl.k8s.io/release/v1.32.1/bin/linux/amd64/kubectl
-
-sudo install -o root -g root -m 0755 kubectl /usr/bin/kubectl
-
-curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+mkdir /var/log/ntpsec
+sudo systemctl stop ntp
+sudo ntpd -gq
+sudo systemctl start ntp
+pip3 install kubernetes --break-system-packages
+sudo apt install tcpdump -y
 
 for i in `seq 0 $number`
 do
@@ -28,7 +27,7 @@ do
     kubectl config rename-context k8s-admin-cluster$i@kubernetes cluster$i
 done
 
-sleep 2
+sleep 5
 
 while read line
 do 
@@ -40,75 +39,90 @@ done < node_list_all
 
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
+ip=$(cat node_list)
+
+> node_ip
+for i in {1..102}; do
+  new_ip=$(echo "$ip" | sed "s/\.[0-9]*$/.${i}/")
+  echo "$new_ip" >> node_ip
+done
+
+while IFS= read -r ip_address; do
+  echo "Send to $ip_address..."
+  scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/ &
+done < "node_ip"
+
+wait
+
+MAX_PARALLEL=50
+current_jobs=0
+
+while IFS= read -r ip_address; do
+  echo "Import to $ip_address..."
+  ssh -o StrictHostKeyChecking=no root@$ip_address bash -c "'
+    ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar  &
+    for image in /root/images_google/*.tar; do
+      ctr -n k8s.io images import \"\$image\"  &
+    done
+    for image in /root/images_system/*.tar; do
+      ctr -n k8s.io images import \"\$image\"  &
+    done
+    wait
+  '" </dev/null &
+
+  current_jobs=$((current_jobs + 1))
+
+  if [ "$current_jobs" -ge "$MAX_PARALLEL" ]; then
+    wait -n
+    current_jobs=$((current_jobs - 1))
+  fi
+done < "node_ip"
+
+wait
+
+echo "All imports done on all nodes!"
+
+cd /root/karmada_package
+
+for image in *.tar *.tar.gz; do
+    if [ -f "$image" ]; then
+        echo "Importing image: $image"
+        ctr -n k8s.io images import "$image"
+    fi
+done
+
+cd /root/images_system
+
+for image in *.tar *.tar.gz; do
+    if [ -f "$image" ]; then
+        echo "Importing image: $image"
+        ctr -n k8s.io images import "$image"
+    fi
+done
+
+cd /root/sec2025/federation_framework/scenario1/karmada-pull/
+
 cluster=1
 for i in $(cat node_list)
 do
 	ssh-keyscan $i >> /root/.ssh/known_hosts
 	scp /root/.kube/config root@$i:/root/.kube
-	ssh root@$i chmod 777 /root/edgesys-2025/federation_framework/scenario1/ocm/worker_node.sh
-	ssh root@$i sh /root/edgesys-2025/federation_framework/scenario1/ocm/worker_node.sh $cluster &
+	ssh root@$i sh /root/sec2025/federation_framework/scenario1/karmada-pull/worker_node.sh $cluster &
 	cluster=$((cluster+1))
 done
-
-apt-get update
-sudo apt-get install vim -y
-sudo apt-get install net-tools -y
-sudo apt install python3-pip -y
-sudo apt-get install jq -y
-sudo apt install git -y
-sudo apt install ntpdate -y
-sudo service ntp stop
-sudo ntpdate ntp.midway.ovh
-sudo service ntp start
-sudo apt install screen -y
-
-# Install helm3
-echo "Helm3"
-wget -c https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
-tar xzvf helm-v3.8.2-linux-amd64.tar.gz
-mv linux-amd64/helm /usr/local/bin/
-helm repo add stable https://charts.helm.sh/stable
-helm repo add cilium https://helm.cilium.io/
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-
-echo "install go"
-wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
-cp /usr/local/go/bin/go /usr/local/bin
 
 for i in `seq 0 0`
 do
     kubectl config use-context cluster$i
-	helm repo update
-	helm install cilium cilium/cilium --version 1.13.4 --wait --wait-for-jobs --namespace kube-system --set operator.replicas=1
+	  helm repo update
+	  helm install cilium cilium/cilium --version 1.17.2 --wait --wait-for-jobs --namespace kube-system --set operator.replicas=1
+    sleep 30
+    kubectl create ns monitoring
+    helm install --version 70.4.2 prometheus-community/kube-prometheus-stack --generate-name --set grafana.enabled=false --set alertmanager.enabled=false --set prometheus.service.type=NodePort --set prometheus.prometheusSpec.scrapeInterval="5s" --set prometheus.prometheusSpec.enableAdminAPI=true --namespace monitoring --values values.yaml --set prometheus.prometheusSpec.resources.requests.cpu="250m" --set prometheus.prometheusSpec.resources.requests.memory="512Mi"
 done
 
-for i in `seq 0 0`
-do
-  kubectl --context=cluster$i create -f metrics_server.yaml
-done
-sleep 5
-
-# 讀取初始 node ip (例如 10.10.10.1)
-ip=$(cat node_list)
-
-# 生成 node_ip 檔案，依據原始 IP 的前三段，替換最後一段為 1 到 101
-> node_ip  # 先清空 node_ip 檔案
-for i in {1..101}; do
-  new_ip=$(echo "$ip" | sed "s/\.[0-9]*$/.${i}/")
-  echo "$new_ip" >> node_ip
-done
-
-# 傳送 tar 檔到各個節點
-while IFS= read -r ip_address; do
-  echo "傳送檔案到 $ip_address ..."
-  scp -o StrictHostKeyChecking=no /root/nginx.tar root@$ip_address:/root/
-done < "node_ip"
-
-while IFS= read -r ip_address; do
-  echo "傳送檔案到 $ip_address ..."
-  ssh -o StrictHostKeyChecking=no root@$ip_address "ctr -n k8s.io images import /root/nginx.tar" </dev/null &
-done < "node_ip"
+sleep 30
 
 echo "-------------------------------------- OK --------------------------------------"
