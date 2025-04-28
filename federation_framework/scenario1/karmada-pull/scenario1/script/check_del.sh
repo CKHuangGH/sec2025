@@ -32,8 +32,8 @@ check_pod() {
         log_status "pods" "$pod_count" "$expected_pods"
     if [ "$pod_count" -eq "$expected_pods" ] && [ "$pod_ready" -eq 0 ]; then
         time_pod=$(date +'%s.%N')
-        echo "✅ Pods ready at $time_pod"
-        echo "timeforpods $time_pod" >> time.txt
+        echo "✅ delPods ready at $time_pod"
+        echo "timefordelpods $time_pod" >> time.txt
         pod_ready=1
     fi
 }
@@ -43,8 +43,8 @@ check_svc() {
     log_status "services" "$svc_count" "$expected_services"
     if [ "$svc_count" -eq "$expected_services" ] && [ "$svc_ready" -eq 0 ]; then
         time_svc=$(date +'%s.%N')
-        echo "✅ Services ready at $time_svc"
-        echo "timeforsvc $time_svc" >> time.txt
+        echo "✅ delServices ready at $time_svc"
+        echo "timefordelsvc $time_svc" >> time.txt
         svc_ready=1
     fi
 }
@@ -54,16 +54,16 @@ check_sa() {
     log_status "serviceaccounts" "$sa_count" "$expected_sa"
     if [ "$sa_count" -eq "$expected_sa" ] && [ "$sa_ready" -eq 0 ]; then
         time_sa=$(date +'%s.%N')
-        echo "✅ ServiceAccounts ready at $time_sa"
-        echo "timeforsa $time_sa" >> time.txt
+        echo "✅ delServiceAccounts ready at $time_sa"
+        echo "timefordelsa $time_sa" >> time.txt
         sa_ready=1
     fi
 }
 
 check_all_ready() {
     if [ "$pod_ready" -eq 1 ] && [ "$svc_ready" -eq 1 ] && [ "$sa_ready" -eq 1 ]; then
-        echo "🎉 All resources ready!"
-        echo "All ready! Pods at $time_pod, SVC at $time_svc, SA at $time_sa" >> time.txt
+        echo "🎉 All resources are del!"
+        echo "All ready! delPods at $time_pod, delSVC at $time_svc, delSA at $time_sa" >> time.txt
         rm -f $lockfile
         kill 0
     fi
