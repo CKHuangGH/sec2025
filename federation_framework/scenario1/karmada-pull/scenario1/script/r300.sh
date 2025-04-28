@@ -11,7 +11,7 @@ for ((start=1; start<=total; start+=batch_size)); do
 
   for ((i=start; i<=end; i++)); do
     export ID=$i
-    envsubst < ./script/google_demo.yaml | kubectl apply --kubeconfig /etc/karmada/karmada-apiserver.config -f - &
+    envsubst < ./script/google_demo.yaml | kubectl delete --kubeconfig /etc/karmada/karmada-apiserver.config -f - &
   done
 
   wait  # 等待這一輪 12 個指令都跑完
