@@ -34,7 +34,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["server"], cluster=clusters, nodes=21, primary_network=prod_network
+    roles=["server"], cluster=clusters, nodes=26, primary_network=prod_network
     )
     .finalize()
 )
@@ -45,7 +45,7 @@ print(roles)
 
 subnet = networks["my_subnet"]
 cp = 1
-w=200
+w=250
 
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
