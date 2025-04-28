@@ -29,7 +29,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["server"], cluster=clusters, nodes=11, primary_network=prod_network, servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
+    roles=["server"], cluster=clusters, nodes=11, primary_network=prod_network
     )
     .finalize()
 )
