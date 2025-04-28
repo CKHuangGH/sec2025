@@ -27,8 +27,13 @@ log_status() {
 }
 
 check_pod() {
-    pod_count=$(kubectl get pods --field-selector=status.phase=Running --no-headers --context $CONTEXT -n $NAMESPACE | wc -l)
-    log_status "pods" "$pod_count" "$expected_pods"
+    pod_count=$(kubectl get pods --context $CONTEXT -n $NAMESPACE \
+        -o json | jq '[.items[] | select(.status.phase=="Running") | select(all(.status.containerStatuses[]?; .ready==true))] | length')
+
+    if [ "$pod_count" -ne "$last_pod_count" ]; then
+        log_status "pods" "$pod_count" "$expected_pods"
+        last_pod_count=$pod_count
+    fi
     if [ "$pod_count" -eq "$expected_pods" ] && [ "$pod_ready" -eq 0 ]; then
         time_pod=$(date +'%s.%N')
         echo "✅ Pods ready at $time_pod"

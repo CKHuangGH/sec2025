@@ -3,6 +3,7 @@ from enoslib.infra.enos_vmong5k.provider import VMonG5k
 from enoslib.infra.enos_vmong5k.configuration import Configuration
 import time
 import enoslib as en
+from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
@@ -18,6 +19,10 @@ duration = "12:00:00"
 
 prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 
+today = datetime.now().strftime("%Y-%m-%d")
+
+reservation_time = today + " 17:01:00"
+
 name_job = name + clusters
 
 role_name = "cluster" + str(clusters)
@@ -29,7 +34,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["server"], cluster=clusters, nodes=11, primary_network=prod_network
+    roles=["server"], cluster=clusters, nodes=21, primary_network=prod_network
     )
     .finalize()
 )
@@ -40,7 +45,7 @@ print(roles)
 
 subnet = networks["my_subnet"]
 cp = 1
-w=100
+w=200
 
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")

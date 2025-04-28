@@ -1,6 +1,6 @@
 #!/bin/bash
 
-read -p "please enter the test number(200, 400, 600, 800, 1000): " number
+read -p "please enter the test number(0, 60, 120, 180, 240, 300): " number
 
 for (( times=0; times<2; times++ )); do
     bash ./script/init_reg.sh

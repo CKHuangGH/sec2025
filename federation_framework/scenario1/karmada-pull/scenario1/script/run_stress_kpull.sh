@@ -13,7 +13,9 @@ done < "node_list"
 echo $number
 echo $number >> number.txt
 
-sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
+# sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
+
+sudo tcpdump -i ens3 -nn -q '(src net 10.144.0.0/16 and dst net 10.144.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
 
 sleep 120
 
