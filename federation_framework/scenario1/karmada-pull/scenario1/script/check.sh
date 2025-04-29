@@ -7,94 +7,63 @@ expected_sa=$3
 CONTEXT="cluster1"
 NAMESPACE="default"
 
-pod_ready=0
-svc_ready=0
-sa_ready=0
+all_ready=false
 
-time_pod=""
-time_svc=""
-time_sa=""
-
-lockfile="/tmp/watch_lock_$$"
-touch $lockfile
+timestamp() {
+    date +'%s.%N'
+}
 
 log_status() {
     local resource=$1
     local current=$2
     local expected=$3
-    local timestamp=$(date +'%s.%N')
-    echo "$timestamp $resource $current / $expected" >> time.txt
-}
-
-check_pod() {
-    pod_count=$(kubectl get pods --context $CONTEXT -n $NAMESPACE \
-        -o json | jq '[.items[] | select(.status.phase=="Running") | select(all(.status.containerStatuses[]?; .ready==true))] | length')
-        log_status "pods" "$pod_count" "$expected_pods"
-    if [ "$pod_count" -eq "$expected_pods" ] && [ "$pod_ready" -eq 0 ]; then
-        time_pod=$(date +'%s.%N')
-        echo "✅ Pods ready at $time_pod"
-        echo "timeforpods $time_pod" >> time.txt
-        pod_ready=1
-    fi
-}
-
-check_svc() {
-    svc_count=$(kubectl get svc --no-headers --context $CONTEXT -n $NAMESPACE | wc -l)
-    log_status "services" "$svc_count" "$expected_services"
-    if [ "$svc_count" -eq "$expected_services" ] && [ "$svc_ready" -eq 0 ]; then
-        time_svc=$(date +'%s.%N')
-        echo "✅ Services ready at $time_svc"
-        echo "timeforsvc $time_svc" >> time.txt
-        svc_ready=1
-    fi
-}
-
-check_sa() {
-    sa_count=$(kubectl get sa --no-headers --context $CONTEXT -n $NAMESPACE | wc -l)
-    log_status "serviceaccounts" "$sa_count" "$expected_sa"
-    if [ "$sa_count" -eq "$expected_sa" ] && [ "$sa_ready" -eq 0 ]; then
-        time_sa=$(date +'%s.%N')
-        echo "✅ ServiceAccounts ready at $time_sa"
-        echo "timeforsa $time_sa" >> time.txt
-        sa_ready=1
-    fi
+    echo "$(timestamp) $resource $current / $expected" >> time.txt
 }
 
 check_all_ready() {
-    if [ "$pod_ready" -eq 1 ] && [ "$svc_ready" -eq 1 ] && [ "$sa_ready" -eq 1 ]; then
-        echo "🎉 All resources ready!"
-        echo "All ready! Pods at $time_pod, SVC at $time_svc, SA at $time_sa" >> time.txt
-        rm -f $lockfile
-        kill 0
+    local current_pods=$(kubectl get pods --context "$CONTEXT" -n "$NAMESPACE" -o jsonpath='{.items[?(@.status.phase=="Running" && .status.containerStatuses[*].ready==true)].metadata.name}' | wc -w)
+    local current_svcs=$(kubectl get svc --no-headers --context "$CONTEXT" -n "$NAMESPACE" | wc -l)
+    local current_sas=$(kubectl get sa --no-headers --context "$CONTEXT" -n "$NAMESPACE" | wc -l)
+
+    log_status "pods" "$current_pods" "$expected_pods"
+    log_status "services" "$current_svcs" "$expected_services"
+    log_status "serviceaccounts" "$current_sas" "$expected_sa"
+
+    if [ "$current_pods" -eq "$expected_pods" ] &&
+       [ "$current_svcs" -eq "$expected_services" ] &&
+       [ "$current_sas" -eq "$expected_sa" ]; then
+        if ! "$all_ready"; then
+            echo "🎉 All resources ready!"
+            echo "timeforpods $(timestamp)" >> time.txt
+            echo "timeforsvc $(timestamp)" >> time.txt
+            echo "timeforsa $(timestamp)" >> time.txt
+            all_ready=true
+        fi
+        return 0
+    else
+        return 1
     fi
 }
 
-# Initial check before watch (防止一開始就 ready 沒有 event)
-check_pod
-check_svc
-check_sa
+# 監控資源
+watch_resources() {
+    kubectl get pods,svc,sa --watch --context "$CONTEXT" -n "$NAMESPACE" |
+    while read -r event; do
+        check_all_ready
+        if "$all_ready"; then
+            return 0
+        fi
+    done
+}
+
+# 初始檢查
 check_all_ready
+if "$all_ready"; then
+    exit 0
+fi
 
-# Pod watcher
-kubectl get pods --watch --context $CONTEXT -n $NAMESPACE | while read line; do
-    if [ ! -f $lockfile ]; then break; fi
-    check_pod
-    check_all_ready
-done &
+# 開始監控
+watch_resources
 
-# Service watcher
-kubectl get svc --watch --context $CONTEXT -n $NAMESPACE | while read line; do
-    if [ ! -f $lockfile ]; then break; fi
-    check_svc
-    check_all_ready
-done &
-
-# ServiceAccount watcher
-kubectl get sa --watch --context $CONTEXT -n $NAMESPACE | while read line; do
-    if [ ! -f $lockfile ]; then break; fi
-    check_sa
-    check_all_ready
-done &
-
-# Wait for all background processes
-wait
+echo "⚠️ Monitoring finished without all resources becoming ready." >&2
+exit 1

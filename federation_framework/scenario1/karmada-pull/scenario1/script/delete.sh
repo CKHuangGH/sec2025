@@ -4,9 +4,7 @@ SVC_THRESHOLD=1
 SA_THRESHOLD=1
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_svc_del.sh $SVC_THRESHOLD &
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_sa_del.sh $SA_THRESHOLD &
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_pod_del.sh $POD_THRESHOLD &
+  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/check_del.sh $POD_THRESHOLD $SVC_THRESHOLD $SA_THRESHOLD &
 done
 
 for ip in $(cat node_exec); do 
