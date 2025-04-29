@@ -1,7 +1,7 @@
 number=$1
 POD_THRESHOLD=$(( number * 11 ))
 SVC_THRESHOLD=$(( number * 11 + 1 ))
-SA_THRESHOLD=$(( number * 10 - 1 ))
+SA_THRESHOLD=$(( number * 10 + 1 ))
 
 while read -r ip; do
     if [[ "$ip" =~ ^[[:space:]]*$ || "$ip" =~ ^\s*# ]]; then
@@ -35,7 +35,7 @@ for ip in $(cat node_exec); do
 done
 
 echo "wait for 900 secs"
-for (( i=900; i>0; i-- )); do
+for (( i=30; i>0; i-- )); do
     printf "\r%4d secs remaining..." "$i"
     sleep 1
 done
