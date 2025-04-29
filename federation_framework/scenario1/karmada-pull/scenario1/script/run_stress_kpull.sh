@@ -35,7 +35,7 @@ for ip in $(cat node_exec); do
 done
 
 echo "wait for 900 secs"
-for (( i=30; i>0; i-- )); do
+for (( i=900; i>0; i-- )); do
     printf "\r%4d secs remaining..." "$i"
     sleep 1
 done
