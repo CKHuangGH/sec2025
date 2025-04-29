@@ -6,7 +6,7 @@ kubectl karmada init --crds /root/addon/crds.tar.gz
 
 REGISTER_CMD=$(kubectl karmada token create --print-register-command --kubeconfig=/etc/karmada/karmada-apiserver.config)
 
-for i in $(cat node_list)
+for i in $(cat node_exec)
 do
     ssh root@$i eval "$REGISTER_CMD"
 done
