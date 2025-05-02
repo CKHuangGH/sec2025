@@ -35,6 +35,7 @@ scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/ocm/node
 scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/karmada-pull/node_list
 scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/karmada-push/node_list
 scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/kubefed/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/devs1/karmada-pull/node_list
 # scenario2
 scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/ocm/node_list
 scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/karmada-pull/node_list

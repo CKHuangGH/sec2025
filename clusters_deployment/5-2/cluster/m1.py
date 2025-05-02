@@ -7,34 +7,34 @@ from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
-name = "devs1-member-1"
+name = "devs1-member-1-2"
 
-clusters = "ecotype"
+clusters = "gros"
 
-site = "nantes"
+site = "nancy"
 
 master_nodes = []
 
-duration = "12:00:00"
+duration = "60:00:00"
 
 prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 
 today = datetime.now().strftime("%Y-%m-%d")
 
-reservation_time = today + " 17:01:00"
+reservation_time = today + " 19:01:00"
 
 name_job = name + clusters
 
 role_name = "cluster" + str(clusters)
 
 conf = (
-    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration, reservation=reservation_time)
+    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration, reservation=reservation_time )
     .add_network_conf(prod_network)
     .add_network(
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["server"], cluster=clusters, nodes=2, primary_network=prod_network, servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
+    roles=["server"], cluster=clusters, nodes=26, primary_network=prod_network
     )
     .finalize()
 )
@@ -45,7 +45,7 @@ print(roles)
 
 subnet = networks["my_subnet"]
 cp = 1
-w=3
+w=250
 
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")

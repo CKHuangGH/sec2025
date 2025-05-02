@@ -99,7 +99,7 @@ kubectl apply -f patched-clusterrole.yaml --kubeconfig /etc/karmada/karmada-apis
 
 # 檔案路徑
 CLUSTERROLE_FILE="patched-clusterrole.yaml"
-SECRET_FILE="secret.yaml"
+SECRET_FILE="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/secret.yaml"
 TEMP_FILE="secret.tmp.yaml"
 
 # 取得 ClusterRole 的 metadata.name
@@ -133,7 +133,7 @@ awk -v newname="$SERVICE_ACCOUNT_NAME" '
 
 echo "已更新 secret.yaml 中的 service-account.name 為：$SERVICE_ACCOUNT_NAME"
 
-kubectl apply -f secret.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
+kubectl apply -f ./script/secret.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
 
 # 設定變數
 KUBECONFIG_PATH="/etc/karmada/karmada-apiserver.config"
