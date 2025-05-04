@@ -4,6 +4,7 @@ from enoslib.infra.enos_vmong5k.configuration import Configuration
 import time
 import enoslib as en
 from datetime import datetime
+import pickle
 
 en.set_config(ansible_forks=100)
 
@@ -41,8 +42,9 @@ conf = (
 provider = en.G5k(conf)
 roles, networks = provider.init()
 roles = en.sync_info(roles, networks)
+with open('experiment_state.pkl', 'wb') as f:
+    pickle.dump(data, f)
 print(roles)
-print(provider)
 
 subnet = networks["my_subnet"]
 cp = 1
