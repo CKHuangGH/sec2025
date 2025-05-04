@@ -1,6 +1,7 @@
 import jsonpickle
 from enoslib.api import generate_inventory, run_ansible
 import enoslib as en
+import time
 from datetime import datetime
 
 en.set_config(ansible_forks=100)
@@ -37,5 +38,9 @@ with open("reserved_management.json", "w") as f:
 
 with open("reserved_management_networks.json", "w") as f:
     f.write(jsonpickle.encode(networks))
+    
+for i in range(45, 0, -1):
+    print(f"Remaining: {i} seconds")
+    time.sleep(1)
 
 print("Reservation management: physical nodes and network configuration.")
