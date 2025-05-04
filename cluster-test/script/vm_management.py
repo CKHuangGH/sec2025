@@ -36,7 +36,9 @@ inventory_file = "kubefed_inventory_redeploy.ini"
 inventory = generate_inventory(vmroles, networks, inventory_file)
 
 # === Wait for VMs to boot ===
-time.sleep(45)
+for i in range(45, 0, -1):
+    print(f"Remaining: {i} seconds")
+    time.sleep(1)
 
 # === Run post-deployment playbook ===
 run_ansible(["afterbuild.yml"], inventory_path=inventory_file)

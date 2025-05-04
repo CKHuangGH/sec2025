@@ -39,7 +39,7 @@ with open("reserved_management.json", "w") as f:
 with open("reserved_management_networks.json", "w") as f:
     f.write(jsonpickle.encode(networks))
     
-for i in range(45, 0, -1):
+for i in range(10, 0, -1):
     print(f"Remaining: {i} seconds")
     time.sleep(1)
 
