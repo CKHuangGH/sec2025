@@ -42,6 +42,7 @@ provider = en.G5k(conf)
 roles, networks = provider.init()
 roles = en.sync_info(roles, networks)
 print(roles)
+print(provider)
 
 subnet = networks["my_subnet"]
 cp = 1
