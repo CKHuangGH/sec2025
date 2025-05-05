@@ -1,2 +1,1 @@
-python3 ./script/server-management.py
-python3 ./script/vm-management.py
+python3 ./script/del-vm-management.py
