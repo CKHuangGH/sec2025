@@ -22,6 +22,7 @@ virt_conf = (
     .add_machine(
         roles=["cp"],
         number=1,
+        cluster="ecotype",
         undercloud=roles["role0"],
         flavour_desc={"core": 16, "mem": 32768},
         macs=[mac],
