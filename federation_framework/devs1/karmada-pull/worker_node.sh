@@ -21,5 +21,5 @@ helm install cilium cilium/cilium --version 1.17.2 --wait --wait-for-jobs --name
 sleep 30
 
 kubectl create ns monitoring
-helm install --version 70.4.2 prometheus-community/kube-prometheus-stack --generate-name --set grafana.enabled=false --set alertmanager.enabled=false --set prometheus.service.type=NodePort --set prometheus.prometheusSpec.scrapeInterval="5s" --set prometheus.prometheusSpec.enableAdminAPI=true --namespace monitoring --values /root/sec2025/federation_framework/scenario1/karmada-pull/values_worker.yaml --set prometheus.prometheusSpec.resources.requests.cpu="250m" --set prometheus.prometheusSpec.resources.requests.memory="512Mi"
+helm install --version 70.4.2 prometheus-community/kube-prometheus-stack --generate-name --set grafana.enabled=false --set alertmanager.enabled=false --set prometheus.service.type=NodePort --set prometheus.prometheusSpec.scrapeInterval="5s" --set prometheus.prometheusSpec.enableAdminAPI=true --namespace monitoring --values /root/sec2025/federation_framework/devs1/karmada-pull/values_worker.yaml --set prometheus.prometheusSpec.resources.requests.cpu="250m" --set prometheus.prometheusSpec.resources.requests.memory="512Mi"
 sleep 30
