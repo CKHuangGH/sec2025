@@ -14,6 +14,8 @@ with open("reserved_management.json", "r") as f:
 with open("reserved_management_networks.json", "r") as f:
     networks = jsonpickle.decode(f.read())
 
+roles = en.sync_info(roles, networks)
+
 # === VM deployment configuration ===
 subnet = networks["my_subnet"]
 mac = list(subnet[0].free_macs)[0]
