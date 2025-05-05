@@ -7,10 +7,10 @@ import time
 en.set_config(ansible_forks=100)
 
 # === Load saved reservation info ===
-with open("reserved_roles.json", "r") as f:
+with open("reserved_management.json", "r") as f:
     roles = jsonpickle.decode(f.read())
 
-with open("reserved_networks.json", "r") as f:
+with open("reserved_management_networks.json", "r") as f:
     networks = jsonpickle.decode(f.read())
 
 # === VM deployment configuration ===
