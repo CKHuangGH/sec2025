@@ -1,17 +1,27 @@
 prometheus:
   prometheusSpec:
-    podMonitorSelectorNilUsesHelmValues: false
-    serviceMonitorSelectorNilUsesHelmValues: false
+    scrapeNamespaceSelector:
+      matchExpressions:
+        - key: "kubernetes.io/metadata.name"
+          operator: "NotIn"
+          values:
+            - default
     podMonitorNamespaceSelector:
       matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: NotIn
+        - key: "kubernetes.io/metadata.name"
+          operator: "NotIn"
           values:
             - default
     serviceMonitorNamespaceSelector:
       matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: NotIn
+        - key: "kubernetes.io/metadata.name"
+          operator: "NotIn"
+          values:
+            - default
+    ruleNamespaceSelector:
+      matchExpressions:
+        - key: "kubernetes.io/metadata.name"
+          operator: "NotIn"
           values:
             - default
     additionalScrapeConfigs:

@@ -19,4 +19,6 @@ else
     echo "fail to open $input_file"
 fi
 
+cp node_exec ./script/node_exec
+
 echo "screen -S mysession"

@@ -29,6 +29,13 @@ done
 
 sleep 5
 
+sed -i 's|--listen-metrics-urls=http://127.0.0.1:2381|--listen-metrics-urls=http://0.0.0.0:2381|' "/etc/kubernetes/manifests/etcd.yaml"
+sleep 30
+sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-scheduler.yaml"
+sleep 30
+sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-controller-manager.yaml"
+sleep 30
+
 while read line
 do 
 echo $line
@@ -42,7 +49,7 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 ip=$(cat node_list)
 
 > node_ip
-for i in {1..251}; do
+for i in {1..5}; do
   new_ip=$(echo "$ip" | sed "s/\.[0-9]*$/.${i}/")
   echo "$new_ip" >> node_ip
 done
