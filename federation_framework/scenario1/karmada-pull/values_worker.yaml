@@ -1,35 +1,40 @@
 prometheus:
   prometheusSpec:
+    ignoreNamespaceSelectors: true
     scrapeNamespaceSelector:
       matchExpressions:
-        - key: "kubernetes.io/metadata.name"
-          operator: "NotIn"
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
           values:
             - default
     podMonitorNamespaceSelector:
       matchExpressions:
-        - key: "kubernetes.io/metadata.name"
-          operator: "NotIn"
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
           values:
             - default
     serviceMonitorNamespaceSelector:
       matchExpressions:
-        - key: "kubernetes.io/metadata.name"
-          operator: "NotIn"
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
           values:
             - default
     ruleNamespaceSelector:
       matchExpressions:
-        - key: "kubernetes.io/metadata.name"
-          operator: "NotIn"
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
           values:
             - default
+    metricRelabelConfigs:
+      - sourceLabels: [__meta_kubernetes_namespace]
+        regex: default
+        action: drop
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
     tolerations:
-      - key: "node-role.kubernetes.io/control-plane"
-        operator: "Exists"
-        effect: "NoSchedule"
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
 kube-state-metrics:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""

@@ -8,7 +8,7 @@ for (( times=0; times<2; times++ )); do
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
     mkdir results
     bash ./script/karmadaprom.sh
-    sleep 20
+    sleep 60
     bash ./script/run_stress_kpull.sh $number
     sleep 20
     bash ./script/delete.sh $number
