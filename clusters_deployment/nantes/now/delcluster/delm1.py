@@ -7,11 +7,11 @@ from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
-name = "s1-member-1"
+name = "s1-member-1-now"
 
-clusters = "gros"
+clusters = "ecotype"
 
-site = "nancy"
+site = "nantes"
 
 master_nodes = []
 
@@ -34,7 +34,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["server"], cluster=clusters, nodes=21, primary_network=prod_network
+    roles=["server"], cluster=clusters, nodes=2, primary_network=prod_network, servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
     )
     .finalize()
 )

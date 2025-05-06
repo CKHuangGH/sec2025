@@ -7,7 +7,7 @@ from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
-name = "devs1-member-1"
+name = "s1-member-1-5pm"
 
 clusters = "ecotype"
 

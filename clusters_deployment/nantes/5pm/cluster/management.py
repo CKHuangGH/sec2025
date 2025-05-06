@@ -7,61 +7,52 @@ from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
-name = "devs1-member-1"
+name = "s1-management-1-5pm"
 
-clusters = "gros"
+clusters = "ecotype"
 
-site = "nancy"
+site = "nantes"
 
 master_nodes = []
 
-duration = "60:00:00"
+duration = "12:00:00"
 
 prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 
 today = datetime.now().strftime("%Y-%m-%d")
 
-reservation_time = today + " 19:01:00"
+reservation_time = today + " 17:01:00"
 
 name_job = name + clusters
 
 role_name = "cluster" + str(clusters)
 
 conf = (
-    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration, reservation=reservation_time )
+    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration, reservation=reservation_time)
     .add_network_conf(prod_network)
     .add_network(
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["server"], cluster=clusters, nodes=26, primary_network=prod_network
+    roles=["role0"], cluster=clusters, nodes=1, primary_network=prod_network, servers=[f"ecotype-{i}.nantes.grid5000.fr" for i in range(2, 47)]
     )
     .finalize()
 )
 provider = en.G5k(conf)
 roles, networks = provider.init()
 roles = en.sync_info(roles, networks)
-print(roles)
 
 subnet = networks["my_subnet"]
 cp = 1
-w=250
 
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
     .add_machine(
         roles=["cp"],
         number=cp,
-        undercloud=roles["server"],
+        undercloud=roles["role0"],
         flavour_desc={"core": 16, "mem": 32768},
         macs=list(subnet[0].free_macs)[0:1],
-    )
-    .add_machine(
-        roles=["member"],
-        number=w,
-        undercloud=roles["server"],
-        flavour_desc={"core": 2, "mem": 4096},
-        macs=list(subnet[0].free_macs)[1:w+1],
     ).finalize()
 )
 

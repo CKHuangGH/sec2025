@@ -7,11 +7,11 @@ from datetime import datetime
 
 en.set_config(ansible_forks=100)
 
-name = "s1-management-1"
+name = "s1-management-1-5pm"
 
-clusters = "gros"
+clusters = "ecotype"
 
-site = "nancy"
+site = "nantes"
 
 master_nodes = []
 
