@@ -99,11 +99,12 @@ kubectl apply -f patched-clusterrole.yaml --kubeconfig /etc/karmada/karmada-apis
 
 # 檔案路徑
 CLUSTERROLE_FILE="patched-clusterrole.yaml"
-SECRET_FILE="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/secret.yaml"
+SECRET_FILE="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/secret.yaml"
 TEMP_FILE="secret.tmp.yaml"
 
 # 取得 ClusterRole 的 metadata.name
-SERVICE_ACCOUNT_NAME=$(grep '^[[:space:]]*name:' "$CLUSTERROLE_FILE" | head -n 1 | awk '{print $2}')
+SERVICE_ACCOUNT_NAME=$(awk '/metadata:/ {in_metadata=1} in_metadata && /^[[:space:]]*name:/ { print $2; exit }' "$CLUSTERROLE_FILE")
+echo "取得的 ServiceAccount 名稱：$SERVICE_ACCOUNT_NAME"
 
 # 確保有抓到 name
 if [[ -z "$SERVICE_ACCOUNT_NAME" ]]; then
@@ -111,27 +112,27 @@ if [[ -z "$SERVICE_ACCOUNT_NAME" ]]; then
   exit 1
 fi
 
-# 替換 secret.yaml 中的 service-account.name 註解
-# 使用 awk 進行行為級處理
+# 更新 secret.yaml 中的 service-account.name 欄位
 awk -v newname="$SERVICE_ACCOUNT_NAME" '
   BEGIN { changed = 0 }
   {
-    if ($0 ~ /kubernetes.io\/service-account.name:/) {
-      print "    kubernetes.io/service-account.name: \"" newname "\""
+    if ($0 ~ /^[[:space:]]*kubernetes.io\/service-account.name:/) {
+      indent = match($0, /[^ ]/) - 1
+      printf "%*s%s: \"%s\"\n", indent, "", "kubernetes.io/service-account.name", newname
       changed = 1
     } else {
-      print $0
+      print
     }
   }
   END {
     if (!changed) {
-      print "未找到 kubernetes.io/service-account.name 欄位，請確認格式"
+      print "未找到 kubernetes.io/service-account.name 欄位，請確認格式" > "/dev/stderr"
       exit 1
     }
   }
 ' "$SECRET_FILE" > "$TEMP_FILE" && mv "$TEMP_FILE" "$SECRET_FILE"
 
-echo "已更新 secret.yaml 中的 service-account.name 為：$SERVICE_ACCOUNT_NAME"
+echo "✅ 已更新 secret.yaml 中的 service-account.name 為：$SERVICE_ACCOUNT_NAME"
 
 kubectl apply -f ./script/secret.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
 
