@@ -34,7 +34,6 @@ for ip in $(cat node_exec); do
   ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_pod.sh $POD_THRESHOLD
 done
 
-echo "wait for 900 secs"
 for (( i=900; i>0; i-- )); do
     printf "\r%4d secs remaining..." "$i"
     sleep 1

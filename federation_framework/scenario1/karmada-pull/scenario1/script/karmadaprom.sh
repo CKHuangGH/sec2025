@@ -1,59 +1,59 @@
 #!/bin/bash
 
-# 導出 monitoring namespace 的 YAML
+# Export the YAML of the monitoring namespace
 kubectl get namespace monitoring -o yaml > monitoring-namespace.yaml
-echo "✅ 已導出 monitoring namespace 至 monitoring-namespace.yaml"
+echo "✅ Exported monitoring namespace to monitoring-namespace.yaml"
 
-# 找出符合 kube-prometheus-stack-*-prometheus 的 ServiceAccount 名稱
+# Find the ServiceAccount name matching kube-prometheus-stack-*-prometheus
 SA_NAME=$(kubectl get sa -n monitoring --no-headers -o custom-columns=":metadata.name" | grep '^kube-prometheus-stack-.*-prometheus$')
 
 if [ -z "$SA_NAME" ]; then
-  echo "❌ 找不到符合條件的 ServiceAccount"
+  echo "❌ No matching ServiceAccount found"
   exit 1
 fi
 
-# 導出 ServiceAccount 的 YAML
+# Export the ServiceAccount's YAML
 kubectl get sa "$SA_NAME" -n monitoring -o yaml > "sa.yaml"
-echo "✅ 已導出 ServiceAccount $SA_NAME 至 sa.yaml"
+echo "✅ Exported ServiceAccount $SA_NAME to sa.yaml"
 
-# 找出符合的 ClusterRoleBinding 名稱
+# Find the matching ClusterRoleBinding name
 CRB_NAME=$(kubectl get clusterrolebinding --no-headers -o custom-columns=":metadata.name" | grep "^${SA_NAME}$")
 
 if [ -z "$CRB_NAME" ]; then
-  echo "❌ 找不到符合條件的 ClusterRoleBinding"
+  echo "❌ No matching ClusterRoleBinding found"
   exit 1
 fi
 
-# 導出 ClusterRoleBinding 的 YAML
+# Export the ClusterRoleBinding's YAML
 kubectl get clusterrolebinding "$CRB_NAME" -o yaml > "crb.yaml"
-echo "✅ 已導出 ClusterRoleBinding $CRB_NAME 至 crb.yaml"
+echo "✅ Exported ClusterRoleBinding $CRB_NAME to crb.yaml"
 
-echo "🎉 全部資源導出完成！"
+echo "🎉 All resources exported successfully!"
 
-# 設定基底名字
+# Set base name
 BASE_NAME="kube-prometheus-stack"
 OUTPUT_FILE="patched-clusterrole.yaml"
 
-# 自動找出符合的 ClusterRole 名稱（只取 metadata.name）
+# Automatically find the matching ClusterRole name (metadata.name only)
 CLUSTERROLE_NAME=$(kubectl get clusterrole -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep "${BASE_NAME}-.*-prometheus" | head -n1)
 
 if [ -z "$CLUSTERROLE_NAME" ]; then
-  echo "❌ 找不到符合 ${BASE_NAME}-*-prometheus 格式的 ClusterRole！"
+  echo "❌ No ClusterRole matching ${BASE_NAME}-*-prometheus format found!"
   exit 1
 fi
 
-echo "🔎 找到 ClusterRole: ${CLUSTERROLE_NAME}"
+echo "🔎 Found ClusterRole: ${CLUSTERROLE_NAME}"
 
-# 匯出原本的 ClusterRole
+# Export the original ClusterRole
 kubectl get clusterrole ${CLUSTERROLE_NAME} -o yaml > original-clusterrole.yaml
 
-# 檢查是否成功
+# Check if export succeeded
 if [ $? -ne 0 ]; then
-  echo "❌ 匯出 ClusterRole 失敗！"
+  echo "❌ Failed to export ClusterRole!"
   exit 1
 fi
 
-# 用 awk 插入新的 rule
+# Use awk to insert a new rule
 awk '
 /^rules:/ {print; in_rules=1; next}
 in_rules && /^[^ ]/ {
@@ -68,10 +68,10 @@ END {
 }
 ' original-clusterrole.yaml > ${OUTPUT_FILE}
 
-echo "✅ 已經把修改後的 ClusterRole 存到 ${OUTPUT_FILE}"
+echo "✅ Modified ClusterRole saved to ${OUTPUT_FILE}"
 
-# 線上直接 patch 原本的 ClusterRole
-echo "🚀 開始線上 patch ClusterRole..."
+# Patch the original ClusterRole online
+echo "🚀 Patching ClusterRole online..."
 
 kubectl patch clusterrole ${CLUSTERROLE_NAME} --type='json' -p='[
   {
@@ -86,9 +86,9 @@ kubectl patch clusterrole ${CLUSTERROLE_NAME} --type='json' -p='[
 ]'
 
 if [ $? -eq 0 ]; then
-  echo "✅ 線上 patch 成功！"
+  echo "✅ Online patch successful!"
 else
-  echo "❌ 線上 patch 失敗，請手動檢查。"
+  echo "❌ Online patch failed. Please check manually."
 fi
 
 #!/bin/bash
@@ -97,22 +97,22 @@ kubectl apply -f sa.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
 kubectl apply -f crb.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
 kubectl apply -f patched-clusterrole.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
 
-# 檔案路徑
+# File paths
 CLUSTERROLE_FILE="patched-clusterrole.yaml"
 SECRET_FILE="/root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/secret.yaml"
 TEMP_FILE="secret.tmp.yaml"
 
-# 取得 ClusterRole 的 metadata.name
+# Get metadata.name from ClusterRole
 SERVICE_ACCOUNT_NAME=$(awk '/metadata:/ {in_metadata=1} in_metadata && /^[[:space:]]*name:/ { print $2; exit }' "$CLUSTERROLE_FILE")
-echo "取得的 ServiceAccount 名稱：$SERVICE_ACCOUNT_NAME"
+echo "ServiceAccount name obtained: $SERVICE_ACCOUNT_NAME"
 
-# 確保有抓到 name
+# Ensure name was captured
 if [[ -z "$SERVICE_ACCOUNT_NAME" ]]; then
-  echo "找不到 ClusterRole 的 metadata.name"
+  echo "Could not find metadata.name in ClusterRole"
   exit 1
 fi
 
-# 更新 secret.yaml 中的 service-account.name 欄位
+# Update service-account.name field in secret.yaml
 awk -v newname="$SERVICE_ACCOUNT_NAME" '
   BEGIN { changed = 0 }
   {
@@ -126,53 +126,53 @@ awk -v newname="$SERVICE_ACCOUNT_NAME" '
   }
   END {
     if (!changed) {
-      print "未找到 kubernetes.io/service-account.name 欄位，請確認格式" > "/dev/stderr"
+      print "Field kubernetes.io/service-account.name not found, please check format" > "/dev/stderr"
       exit 1
     }
   }
 ' "$SECRET_FILE" > "$TEMP_FILE" && mv "$TEMP_FILE" "$SECRET_FILE"
 
-echo "✅ 已更新 secret.yaml 中的 service-account.name 為：$SERVICE_ACCOUNT_NAME"
+echo "✅ Updated service-account.name in secret.yaml to: $SERVICE_ACCOUNT_NAME"
 
 kubectl apply -f ./script/secret.yaml --kubeconfig /etc/karmada/karmada-apiserver.config
 
-# 設定變數
+# Set variables
 KUBECONFIG_PATH="/etc/karmada/karmada-apiserver.config"
 SECRET_NAME="prometheus"
 NAMESPACE="monitoring"
 VALUES_FILE="/root/sec2025/federation_framework/scenario1/karmada-pull/values.yaml"
-PLACEHOLDER="changehere"
 
-# 取得 token 並解碼
+# Retrieve and decode token
 TOKEN=$(kubectl get secret "$SECRET_NAME" -n "$NAMESPACE" \
   -o=jsonpath="{.data.token}" --kubeconfig "$KUBECONFIG_PATH" | base64 -d)
 
-# 檢查 token 是否成功取得
+# Check if token was successfully retrieved
 if [[ -z "$TOKEN" ]]; then
-  echo "❌ 無法取得或解碼 token，請確認 secret 是否存在。"
+  echo "❌ Failed to retrieve or decode token. Please check if the secret exists."
   exit 1
 fi
 
-# 使用 sed 替換 values.yaml 中的 changehere 為 token
-# 注意處理 token 中可能包含的 `/` 或 `&` 等特殊字元
+# Escape special characters
 ESCAPED_TOKEN=$(printf '%s\n' "$TOKEN" | sed -e 's/[\/&]/\\&/g')
-sed -i "s/$PLACEHOLDER/$ESCAPED_TOKEN/" "$VALUES_FILE"
 
-echo "✅ 已成功將 token 寫入 $VALUES_FILE"
+# Replace the entire bearer_token line using sed
+sed -i -E "s/^([[:space:]]*)bearer_token:.*/\1bearer_token: $ESCAPED_TOKEN/" "$VALUES_FILE"
 
 
-# 找出 release name（以 kube-prometheus-stack 開頭）
+echo "✅ Successfully updated bearer_token in $VALUES_FILE"
+
+# Find the Helm release name (starting with kube-prometheus-stack)
 RELEASE_NAME=$(helm list -n monitoring -o json | jq -r '.[] | select(.name | startswith("kube-prometheus-stack")) | .name')
 
-# 檢查是否找到 release
+# Check if release was found
 if [ -z "$RELEASE_NAME" ]; then
-  echo "找不到 kube-prometheus-stack 的 Helm Release"
+  echo "No Helm release found for kube-prometheus-stack"
   exit 1
 fi
 
-echo "找到的 Release: $RELEASE_NAME"
+echo "Found release: $RELEASE_NAME"
 
-# 執行 helm upgrade
+# Execute helm upgrade
 helm upgrade "$RELEASE_NAME" prometheus-community/kube-prometheus-stack \
   --version 70.4.2 \
   --namespace monitoring \
