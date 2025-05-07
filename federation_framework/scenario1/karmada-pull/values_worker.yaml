@@ -1,43 +1,34 @@
 prometheus:
+  enabled: true
   prometheusSpec:
     ignoreNamespaceSelectors: true
     scrapeNamespaceSelector:
       matchExpressions:
         - key: kubernetes.io/metadata.name
           operator: NotIn
-          values:
-            - default
-    podMonitorNamespaceSelector:
-      matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: NotIn
-          values:
-            - default
+          values: ["default"]
     serviceMonitorNamespaceSelector:
       matchExpressions:
         - key: kubernetes.io/metadata.name
           operator: NotIn
-          values:
-            - default
+          values: ["default"]
+    podMonitorNamespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: ["default"]
     ruleNamespaceSelector:
       matchExpressions:
         - key: kubernetes.io/metadata.name
           operator: NotIn
-          values:
-            - default
-    relabelConfigs:
+          values: ["default"]
+    relabelings:
       - sourceLabels: [__meta_kubernetes_namespace]
         regex: default
         action: drop
-    metricRelabelConfigs:
-      - sourceLabels: [__meta_kubernetes_namespace]
-        regex: default
-        action: drop
+    metricRelabelings:
       - sourceLabels: [namespace]
         regex: default
-        action: drop
-      - sourceLabels: [pod, namespace]
-        regex: .+;default
         action: drop
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
@@ -45,19 +36,24 @@ prometheus:
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
         effect: NoSchedule
-
+kubelet:
+  enabled: true
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [namespace]
+        regex: default
+        action: drop
 kube-state-metrics:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
   tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
-
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
 prometheusOperator:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
   tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
