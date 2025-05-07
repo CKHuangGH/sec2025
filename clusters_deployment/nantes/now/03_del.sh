@@ -1,2 +1,1 @@
-python3 ./delcluster/delmanagement.py &
-python3 ./delcluster/delm1.py &
+python3 ./script/del-server.py
