@@ -15,18 +15,27 @@ with open("reserved_management_networks.json", "r") as f:
 
 # === VM deployment configuration ===
 subnet = networks["my_subnet"]
-mac = list(subnet[0].free_macs)[0]
+cp = 1
+w=3
 
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
     .add_machine(
         roles=["cp"],
-        number=3,
+        number=cp,
+        undercloud=roles["role0"],
+        flavour_desc={"core": 16, "mem": 32768},
+        macs=list(subnet[0].free_macs)[1:2],
+    )
+    .add_machine(
+        roles=["member"],
+        number=w,
         undercloud=roles["role0"],
         flavour_desc={"core": 2, "mem": 4096},
-        macs=[mac],
+        macs=list(subnet[0].free_macs)[2:w+1],
     ).finalize()
 )
+
 
 # === Start VMs ===
 vmroles = en.start_virtualmachines(virt_conf,force_deploy=True)
