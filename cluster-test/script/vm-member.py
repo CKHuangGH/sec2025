@@ -33,7 +33,7 @@ virt_conf = (
         number=w,
         undercloud=roles["role0"],
         flavour_desc={"core": 2, "mem": 4096},
-        macs=list(subnet[0].free_macs)[2:w+1],
+        macs=list(subnet[0].free_macs)[2:w+2],
     ).finalize()
 )
 
