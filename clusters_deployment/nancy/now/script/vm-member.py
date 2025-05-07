@@ -17,7 +17,6 @@ with open("reserved_management_networks.json", "r") as f:
 subnet = networks["my_subnet"]
 cp = 1
 w=3
-print(list(subnet[0].free_macs)[1:2])
 
 virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")

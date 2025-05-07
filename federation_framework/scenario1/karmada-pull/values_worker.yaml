@@ -25,9 +25,21 @@ prometheus:
           operator: NotIn
           values:
             - default
+    # Target-level filtering (prevent scraping targets in default namespace)
+    relabelConfigs:
+      - sourceLabels: [__meta_kubernetes_namespace]
+        regex: default
+        action: drop
+    # Metric-level filtering (prevent storing metrics from default namespace)
     metricRelabelConfigs:
       - sourceLabels: [__meta_kubernetes_namespace]
         regex: default
+        action: drop
+      - sourceLabels: [namespace]
+        regex: default
+        action: drop
+      - sourceLabels: [pod, namespace]
+        regex: .+;default
         action: drop
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
@@ -35,6 +47,7 @@ prometheus:
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
         effect: NoSchedule
+
 kube-state-metrics:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
@@ -42,6 +55,7 @@ kube-state-metrics:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
+
 prometheusOperator:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
