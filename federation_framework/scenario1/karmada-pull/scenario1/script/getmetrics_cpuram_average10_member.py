@@ -91,4 +91,4 @@ with open(csv_file, mode='w', newline='') as f:
     for namespace, pod, avg_cpu, avg_mem in sorted(avg_results, key=lambda x: (x[0], x[1])):
         writer.writerow([namespace, pod, f"{avg_cpu:.2f}", f"{avg_mem:.2f}"])
 
-print("10-minute average calculation complete. CSV saved as:", csv_file)
+print("10-minute average calculation complete. CSV saved as:", csv_file)=

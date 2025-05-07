@@ -14,7 +14,7 @@ for ((start=1; start<=total; start+=batch_size)); do
     envsubst < ./script/google_demo.yaml | kubectl delete --kubeconfig /etc/karmada/karmada-apiserver.config -f - &
   done
 
-  wait  # 等待這一輪 12 個指令都跑完
+  wait
 done
 
 echo "deploy timestamps $(date +'%s.%N')" >> number.txt

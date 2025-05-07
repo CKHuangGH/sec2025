@@ -25,12 +25,10 @@ prometheus:
           operator: NotIn
           values:
             - default
-    # Target-level filtering (prevent scraping targets in default namespace)
     relabelConfigs:
       - sourceLabels: [__meta_kubernetes_namespace]
         regex: default
         action: drop
-    # Metric-level filtering (prevent storing metrics from default namespace)
     metricRelabelConfigs:
       - sourceLabels: [__meta_kubernetes_namespace]
         regex: default
