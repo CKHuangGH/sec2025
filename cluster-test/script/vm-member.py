@@ -2,7 +2,6 @@ import jsonpickle
 import enoslib as en
 from enoslib.api import generate_inventory, run_ansible
 from enoslib.infra.enos_vmong5k.configuration import Configuration
-from enoslib.infra.enos_vmong5k.provider import VMonG5k
 import time
 
 en.set_config(ansible_forks=100)
@@ -14,8 +13,6 @@ with open("reserved_management.json", "r") as f:
 with open("reserved_management_networks.json", "r") as f:
     networks = jsonpickle.decode(f.read())
 
-roles = en.sync_info(roles, networks)
-
 # === VM deployment configuration ===
 subnet = networks["my_subnet"]
 mac = list(subnet[0].free_macs)[0]
@@ -24,15 +21,34 @@ virt_conf = (
     en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
     .add_machine(
         roles=["cp"],
-        number=1,
-        cluster="ecotype",
+        number=3,
         undercloud=roles["role0"],
-        flavour_desc={"core": 16, "mem": 32768},
+        flavour_desc={"core": 2, "mem": 4096},
         macs=[mac],
     ).finalize()
 )
 
 # === Start VMs ===
+vmroles = en.start_virtualmachines(virt_conf,force_deploy=True)
 
-provider = VMonG5k(virt_conf)
-provider.destroy()
+# === Generate Ansible inventory ===
+inventory_file = "kubefed_inventory_redeploy.ini"
+inventory = generate_inventory(vmroles, networks, inventory_file)
+
+# === Wait for VMs to boot ===
+for i in range(45, 0, -1):
+    print(f"Remaining: {i} seconds")
+    time.sleep(1)
+
+# === Run post-deployment playbook ===
+run_ansible(["afterbuild.yml"], inventory_path=inventory_file)
+
+# === Save master node IP to file ===
+master_node_ip = vmroles["cp"][0].address
+
+with open("node_list", 'a') as f:
+    f.write(str(master_node_ip))
+    f.write("\n")
+
+print("VM successfully deployed.")
+print("Master node IP:", master_node_ip)

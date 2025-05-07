@@ -1,11 +1,10 @@
-python3 ./cluster/management.py
+python3 ./script/server-management.py
 
-echo "wait for 30 secs"
-sleep 30
+python3 ./script/vm-management.py
 
-python3 ./cluster/m1.py
+python3 ./script/vm-member.py
 
 echo "wait for 60 secs"
 sleep 60
 
-. ./02_system_ready.sh
+# . ./02_system_ready.sh

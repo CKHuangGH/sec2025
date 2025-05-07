@@ -22,7 +22,6 @@ virt_conf = (
     .add_machine(
         roles=["cp"],
         number=1,
-        cluster="ecotype",
         undercloud=roles["role0"],
         flavour_desc={"core": 16, "mem": 32768},
         macs=[mac],
@@ -30,7 +29,7 @@ virt_conf = (
 )
 
 # === Start VMs ===
-vmroles = en.start_virtualmachines(virt_conf)
+vmroles = en.start_virtualmachines(virt_conf,force_deploy=True)
 
 # === Generate Ansible inventory ===
 inventory_file = "kubefed_inventory_redeploy.ini"
