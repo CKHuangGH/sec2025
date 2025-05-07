@@ -31,6 +31,9 @@ conf = (
 provider = en.G5k(conf)
 roles, networks = provider.init()
 roles = en.sync_info(roles, networks)
+print(provider)
+print(roles)
+print(networks)
 
 # === Save physical host and network info for reuse ===
 with open("reserved_management.json", "w") as f:
