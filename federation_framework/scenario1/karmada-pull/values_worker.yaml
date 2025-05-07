@@ -39,10 +39,7 @@ prometheus:
 kubelet:
   enabled: true
   serviceMonitor:
-    metricRelabelings:
-      - sourceLabels: [namespace]
-        regex: default
-        action: drop
+    cAdvisor: false
 kube-state-metrics:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""

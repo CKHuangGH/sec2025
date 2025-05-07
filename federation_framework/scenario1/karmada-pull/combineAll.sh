@@ -1,11 +1,11 @@
 number=$1
 
 mkdir /var/log/ntpsec
+pip3 install kubernetes --break-system-packages
+sudo apt install tcpdump -y
 sudo systemctl stop ntp
 sudo ntpd -gq
 sudo systemctl start ntp
-pip3 install kubernetes --break-system-packages
-sudo apt install tcpdump -y
 
 for i in `seq 0 $number`
 do
@@ -48,11 +48,23 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
 ip=$(cat node_list)
 
+> node_ip_all
 > node_ip
+
 for i in {1..5}; do
   new_ip=$(echo "$ip" | sed "s/\.[0-9]*$/.${i}/")
-  echo "$new_ip" >> node_ip
+  echo "$new_ip" >> node_ip_all
 done
+
+tail -n +2 node_ip_all > node_ip
+
+while IFS= read -r ip_address; do
+  scp -o StrictHostKeyChecking=no -r /root/sec2025/federation_framework/scenario1/karmada-pull/node_ip_all root@$ip_address:sec2025/federation_framework/scenario1/karmada-pull/ &
+done < "node_ip_all"
+
+while IFS= read -r ip_address; do
+  ssh -o StrictHostKeyChecking=no root@$ip_address bash /root/sec2025/federation_framework/scenario1/karmada-pull/ntp.sh &
+done < "node_ip_all"
 
 while IFS= read -r ip_address; do
   echo "Send to $ip_address..."
@@ -116,7 +128,7 @@ for i in $(cat node_list)
 do
 	ssh-keyscan $i >> /root/.ssh/known_hosts
 	scp /root/.kube/config root@$i:/root/.kube
-	ssh root@$i sh /root/sec2025/federation_framework/scenario1/karmada-pull/worker_node.sh $cluster &
+	ssh root@$i bash /root/sec2025/federation_framework/scenario1/karmada-pull/worker_node.sh $cluster &
 	cluster=$((cluster+1))
 done
 
