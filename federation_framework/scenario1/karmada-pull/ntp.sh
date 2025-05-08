@@ -3,7 +3,7 @@
 
 set -euo pipefail  # Exit on error, unset variable, or pipe failure
 
-NODE_LIST="./node_list_all"
+NODE_LIST="./node_ip_all"
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 NTP_CONF="/etc/ntpsec/ntp.conf"
 SERVICE="ntp"
