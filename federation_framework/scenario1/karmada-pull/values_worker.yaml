@@ -1,12 +1,10 @@
+kubelet:
+  serviceMonitor:
+    enabled: false
 prometheus:
   enabled: true
   prometheusSpec:
     ignoreNamespaceSelectors: true
-    scrapeNamespaceSelector:
-      matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: NotIn
-          values: ["default"]
     serviceMonitorNamespaceSelector:
       matchExpressions:
         - key: kubernetes.io/metadata.name
@@ -22,19 +20,28 @@ prometheus:
         - key: kubernetes.io/metadata.name
           operator: NotIn
           values: ["default"]
+    additionalScrapeConfigs:
+      - job_name: 'filtered-kubelet-cadvisor'
+        scheme: https
+        tls_config:
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+        metrics_path: /metrics/cadvisor
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+        metric_relabel_configs:
+          - source_labels: [namespace]
+            regex: default
+            action: drop
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
     tolerations:
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
         effect: NoSchedule
-
-kubelet:
-  enabled: true
-  serviceMonitor:
-    enabled: true
-    cAdvisor: false
-
 kube-state-metrics:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
@@ -42,7 +49,6 @@ kube-state-metrics:
     - key: node-role.kubernetes.io/control-plane
       operator: Exists
       effect: NoSchedule
-
 prometheusOperator:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
