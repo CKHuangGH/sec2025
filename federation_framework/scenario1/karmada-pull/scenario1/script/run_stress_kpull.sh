@@ -46,3 +46,25 @@ for ip in $(cat node_exec); do
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py
 done
+
+echo "========== Kubernetes Status for cluster0 ==========" > clusterstatus.txt
+echo "" >> clusterstatus.txt
+
+echo "== Nodes ==" >> clusterstatus.txt
+kubectl get nodes --context=cluster0 >> clusterstatus.txt 2>&1
+echo "" >> clusterstatus.txt
+
+echo "== Pods (All namespaces) ==" >> clusterstatus.txt
+kubectl get pods --all-namespaces --context=cluster0 >> clusterstatus.txt 2>&1
+echo "" >> clusterstatus.txt
+
+echo "========== Kubernetes Status for cluster1 ==========" >> clusterstatus.txt
+echo "" >> clusterstatus.txt
+
+echo "== Nodes ==" >> clusterstatus.txt
+kubectl get nodes --context=cluster1 >> clusterstatus.txt 2>&1
+echo "" >> clusterstatus.txt
+
+echo "== Pods (All namespaces) ==" >> clusterstatus.txt
+kubectl get pods --all-namespaces --context=cluster1 >> clusterstatus.txt 2>&1
+echo "" >> clusterstatus.txt

@@ -14,7 +14,7 @@ rm -f /etc/karmada/pki/ca.crt
 
 while true; do
     running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
-    echo "Karmada CP pod: $running_pods"
+    echo "Karmada member pod: $running_pods"
     if [ "$running_pods" -eq 0 ]; then
         break
     else
