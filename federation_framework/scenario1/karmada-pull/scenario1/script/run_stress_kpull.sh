@@ -20,11 +20,10 @@ sudo tcpdump -i ens3 -nn -q '(src net 10.144.0.0/16 and dst net 10.144.0.0/16) a
 sleep 120
 
 echo "start deployment $(date +'%s.%N')" >> number.txt
-cp ./number.txt /root/number.txt
-
 for ip in $(cat node_exec); do 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "start deployment"
 done
+cp ./number.txt /root/number.txt
 
 bash ./script/$number.sh > /dev/null 2>&1 &
 
@@ -40,6 +39,7 @@ for (( i=900; i>0; i-- )); do
 done
 
 python3 ./script/getmetrics_cpuram_time.py
+echo "calc average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_cpuram_average10.py
 
 for ip in $(cat node_exec); do 

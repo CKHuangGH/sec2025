@@ -17,4 +17,4 @@ for ((start=1; start<=total; start+=batch_size)); do
   wait
 done
 
-echo "deploy timestamps $(date +'%s.%N')" >> number.txt
+echo "finish cleanup timestamps $(date +'%s.%N')" >> number.txt
