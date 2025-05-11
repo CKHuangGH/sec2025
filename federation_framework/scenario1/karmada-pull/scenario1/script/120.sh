@@ -1,7 +1,7 @@
 #!/bin/bash
 
-batch_size=12
-total=120
+batch_size=10
+total=100
 
 for ((start=1; start<=total; start+=batch_size)); do
   end=$((start + batch_size - 1))

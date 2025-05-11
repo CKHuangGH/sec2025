@@ -1,6 +1,6 @@
 #!/bin/bash
 
-batch_size=12
+batch_size=10
 total=240
 
 for ((start=1; start<=total; start+=batch_size)); do

@@ -1,6 +1,6 @@
 number=$1
-POD_THRESHOLD=$(( number * 11 ))
-SVC_THRESHOLD=$(( number * 11 + 1 ))
+POD_THRESHOLD=$(( number * 10 ))
+SVC_THRESHOLD=$(( number * 10 + 1 ))
 SA_THRESHOLD=$(( number * 10 + 1 ))
 
 while read -r ip; do
@@ -28,8 +28,8 @@ cp ./number.txt /root/number.txt
 bash ./script/$number.sh > /dev/null 2>&1 &
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_svc.sh $SVC_THRESHOLD &
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_sa.sh $SA_THRESHOLD &
+  # ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_svc.sh $SVC_THRESHOLD &
+  # ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_sa.sh $SA_THRESHOLD &
   ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_pod.sh $POD_THRESHOLD
 done
 
