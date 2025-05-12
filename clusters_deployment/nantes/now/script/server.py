@@ -7,12 +7,12 @@ from datetime import datetime
 en.set_config(ansible_forks=100)
 
 # === Grid'5000 reservation settings ===
-name = "devs1-management-1"
+name = "s1-1-now-1"
 clusters = "ecotype"
 site = "nantes"
-duration = "6:00:00"
+duration = "12:00:00"
 today = datetime.now().strftime("%Y-%m-%d")
-reservation_time = today + " 17:01:00"
+reservation_time = today + " 19:01:00"
 name_job = name + clusters
 prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 

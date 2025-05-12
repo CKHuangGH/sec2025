@@ -16,7 +16,7 @@ with open("reserved_management_networks.json", "r") as f:
 # === VM deployment configuration ===
 subnet = networks["my_subnet"]
 cp = 1
-w=3
+w=250
 print(list(subnet[0].free_macs)[1:2])
 
 virt_conf = (

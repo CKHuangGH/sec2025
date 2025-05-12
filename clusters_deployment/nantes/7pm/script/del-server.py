@@ -7,24 +7,24 @@ from datetime import datetime
 en.set_config(ansible_forks=100)
 
 # === Grid'5000 reservation settings ===
-name = "devs1-management-1"
+name = "s1-1-7pm-1"
 clusters = "ecotype"
 site = "nantes"
 duration = "12:00:00"
 today = datetime.now().strftime("%Y-%m-%d")
-reservation_time = today + " 17:01:00"
+reservation_time = today + " 19:01:00"
 name_job = name + clusters
 prod_network = en.G5kNetworkConf(type="prod", roles=["my_network"], site=site)
 
 # === EnOSlib: Reserve physical nodes ===
 conf = (
-    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration)
+    en.G5kConf.from_settings(job_type="allow_classic_ssh", job_name=name_job, walltime=duration,reservation=reservation_time)
     .add_network_conf(prod_network)
     .add_network(
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["role0"], cluster=clusters, nodes=3, primary_network=prod_network
+    roles=["role0"], cluster=clusters, nodes=28, primary_network=prod_network
     )
     .finalize()
 )
