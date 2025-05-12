@@ -13,6 +13,8 @@ fi
 
 kubectl karmada unregister cluster1 --cluster-kubeconfig /root/.kube/cluster1
 
+sleep 30
+
 echo "y" | kubectl karmada deinit
 
 rm -rf /var/lib/karmada-etcd

@@ -15,6 +15,7 @@ for (( times=0; times<2; times++ )); do
     sleep 30
     bash ./script/getdocker.sh $number $times
     bash ./script/reset.sh
+    sleep 30
     for ip in $(cat node_exec)
     do 
 	    ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
