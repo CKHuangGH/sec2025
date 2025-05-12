@@ -34,7 +34,7 @@ sleep 30
 sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-scheduler.yaml"
 sleep 30
 sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-controller-manager.yaml"
-sleep 30
+sleep 60
 
 while read line
 do 
@@ -43,8 +43,6 @@ ip1=$(echo $line | cut -d "." -f 2)
 ip2=$(echo $line | cut -d "." -f 3)
 break
 done < node_list_all
-
-kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
 ip=$(cat node_list)
 
@@ -133,6 +131,8 @@ do
 	ssh root@$i bash /root/sec2025/federation_framework/scenario1/karmada-pull/worker_node.sh $cluster &
 	cluster=$((cluster+1))
 done
+
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
 for i in `seq 0 0`
 do
