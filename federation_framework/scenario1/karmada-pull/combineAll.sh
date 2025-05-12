@@ -64,6 +64,7 @@ while IFS= read -r ip_address; do
 done < "node_ip_all"
 
 while IFS= read -r ip_address; do
+  ssh -o StrictHostKeyChecking=no root@$ip_address mkdir /var/log/ntpsec
   ssh -o StrictHostKeyChecking=no root@$ip_address bash /root/ntp.sh &
 done < "node_ip_all"
 
