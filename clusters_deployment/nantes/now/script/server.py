@@ -10,7 +10,7 @@ en.set_config(ansible_forks=100)
 name = "devs1-management-1"
 clusters = "ecotype"
 site = "nantes"
-duration = "12:00:00"
+duration = "6:00:00"
 today = datetime.now().strftime("%Y-%m-%d")
 reservation_time = today + " 17:01:00"
 name_job = name + clusters
@@ -24,7 +24,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["role0"], cluster=clusters, nodes=3, primary_network=prod_network
+    roles=["role0"], cluster=clusters, nodes=28, primary_network=prod_network
     )
     .finalize()
 )
