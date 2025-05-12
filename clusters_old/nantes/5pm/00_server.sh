@@ -1,1 +1,0 @@
-python3 ./cluster/server-management.py &
