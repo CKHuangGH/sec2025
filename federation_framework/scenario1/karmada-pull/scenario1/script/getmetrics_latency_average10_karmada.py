@@ -71,6 +71,25 @@ latency_q = {
     ''',
 }
 
+# 新增：平均延遲 (average latency) 的計算
+# 公式：sum(rate(..._sum[1m])) / sum(rate(..._count[1m])) by (verb)
+avg_latency_q = {
+    'kube_avg': f'''
+        sum(rate(apiserver_request_duration_seconds_sum{{job="kubernetes-apiserver"}}[1m]))
+        by (verb)
+        /
+        sum(rate(apiserver_request_duration_seconds_count{{job="kubernetes-apiserver"}}[1m]))
+        by (verb)
+    ''',
+    'karmada_avg': f'''
+        sum(rate(apiserver_request_duration_seconds_sum{{job="karmada-apiserver"}}[1m]))
+        by (verb)
+        /
+        sum(rate(apiserver_request_duration_seconds_count{{job="karmada-apiserver"}}[1m]))
+        by (verb)
+    ''',
+}
+
 qps_q = {
     'kube':   'sum(rate(apiserver_request_total{job="kubernetes-apiserver"}[1m])) by (verb)',
     'karmada':'sum(rate(apiserver_request_total{job="karmada-apiserver"}[1m])) by (verb)',
@@ -78,10 +97,12 @@ qps_q = {
 
 # --- Fetch data ---
 results = {}
-# latency
+# latency quantiles
 for key, q in latency_q.items():
     results[key] = query_prometheus_range(q.strip(), start_ts, end_ts, step)
-
+# average latency
+for key, q in avg_latency_q.items():
+    results[key] = query_prometheus_range(q.strip(), start_ts, end_ts, step)
 # qps
 for key, q in qps_q.items():
     results[f"qps_{key}"] = query_prometheus_range(q.strip(), start_ts, end_ts, step)
@@ -92,7 +113,6 @@ for name, series_list in results.items():
     d = {}
     for series in series_list:
         verb = series['metric'].get('verb', 'N/A')
-        # Pick the numeric value for each timestamp
         for _, val in series['values']:
             try:
                 d.setdefault(verb, []).append(float(val))
@@ -110,22 +130,26 @@ with open(csv_file, mode='w', newline='') as f:
         "latency_p99_karmada_ms",
         "latency_p50_kubernetes_ms",
         "latency_p50_karmada_ms",
+        "avg_latency_kubernetes_ms",
+        "avg_latency_karmada_ms",
         "avg_qps_kubernetes",
         "avg_qps_karmada"
     ])
 
-    # All possible HTTP verbs
+    # Collect all verbs
     all_verbs = set()
     for d in parsed.values():
         all_verbs |= set(d.keys())
 
     for verb in sorted(all_verbs):
-        p99_kube  = avg_ms(parsed['kube_p99'].get(verb, []))
-        p99_karm  = avg_ms(parsed['karmada_p99'].get(verb, []))
-        p50_kube  = avg_ms(parsed['kube_p50'].get(verb, []))
-        p50_karm  = avg_ms(parsed['karmada_p50'].get(verb, []))
-        qps_kube  = avg(parsed['qps_kube'].get(verb, []))
-        qps_karm  = avg(parsed['qps_karmada'].get(verb, []))
+        p99_kube    = avg_ms(parsed['kube_p99'].get(verb, []))
+        p99_karm    = avg_ms(parsed['karmada_p99'].get(verb, []))
+        p50_kube    = avg_ms(parsed['kube_p50'].get(verb, []))
+        p50_karm    = avg_ms(parsed['karmada_p50'].get(verb, []))
+        avg_kube    = avg_ms(parsed['kube_avg'].get(verb, []))
+        avg_karm    = avg_ms(parsed['karmada_avg'].get(verb, []))
+        qps_kube    = avg(parsed['qps_kube'].get(verb, []))
+        qps_karm    = avg(parsed['qps_karmada'].get(verb, []))
 
         writer.writerow([
             verb,
@@ -133,8 +157,10 @@ with open(csv_file, mode='w', newline='') as f:
             f"{p99_karm:.2f}",
             f"{p50_kube:.2f}",
             f"{p50_karm:.2f}",
+            f"{avg_kube:.2f}",
+            f"{avg_karm:.2f}",
             f"{qps_kube:.2f}",
             f"{qps_karm:.2f}"
         ])
 
-print("API server p99/p50 latency and average QPS in the past 10 minutes have been written to:", csv_file)
+print("API server latency (p99/p50/avg) and average QPS in the past 10 minutes have been written to:", csv_file)

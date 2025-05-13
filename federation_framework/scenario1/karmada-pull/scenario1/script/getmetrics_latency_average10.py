@@ -45,13 +45,13 @@ step = "5s"  # One data point every 5 seconds
 
 # --- PromQL queries ---
 latency_q = {
-    'kube_p99':   '''
+    'kube_p99': '''
         histogram_quantile(0.99,
           sum(rate(apiserver_request_duration_seconds_bucket{job="kubernetes-apiserver"}[1m]))
           by (le, verb)
         )
     ''',
-    'kube_p50':   '''
+    'kube_p50': '''
         histogram_quantile(0.50,
           sum(rate(apiserver_request_duration_seconds_bucket{job="kubernetes-apiserver"}[1m]))
           by (le, verb)
@@ -59,17 +59,31 @@ latency_q = {
     ''',
 }
 
+# 新增：Kubernetes API Server 平均延遲
+# avg = sum(rate(..._sum[1m])) / sum(rate(..._count[1m])) by (verb)
+avg_latency_q = {
+    'kube_avg': '''
+        sum(rate(apiserver_request_duration_seconds_sum{job="kubernetes-apiserver"}[1m]))
+        by (verb)
+        /
+        sum(rate(apiserver_request_duration_seconds_count{job="kubernetes-apiserver"}[1m]))
+        by (verb)
+    ''',
+}
+
 qps_q = {
-    'kube':   'sum(rate(apiserver_request_total{job="kubernetes-apiserver"}[1m])) by (verb)',
+    'kube': 'sum(rate(apiserver_request_total{job="kubernetes-apiserver"}[1m])) by (verb)',
 }
 
 # --- Fetch data ---
 results = {}
-# latency
+# latency quantiles
 for key, q in latency_q.items():
     results[key] = query_prometheus_range(q.strip(), start_ts, end_ts, step)
-
-# qps
+# average latency
+for key, q in avg_latency_q.items():
+    results[key] = query_prometheus_range(q.strip(), start_ts, end_ts, step)
+# QPS
 for key, q in qps_q.items():
     results[f"qps_{key}"] = query_prometheus_range(q.strip(), start_ts, end_ts, step)
 
@@ -79,7 +93,6 @@ for name, series_list in results.items():
     d = {}
     for series in series_list:
         verb = series['metric'].get('verb', 'N/A')
-        # Pick the numeric value for each timestamp
         for _, val in series['values']:
             try:
                 d.setdefault(verb, []).append(float(val))
@@ -95,24 +108,27 @@ with open(csv_file, mode='w', newline='') as f:
         "verb",
         "latency_p99_kubernetes_ms",
         "latency_p50_kubernetes_ms",
+        "avg_latency_kubernetes_ms",
         "avg_qps_kubernetes"
     ])
 
-    # All possible HTTP verbs
+    # Collect all HTTP verbs seen
     all_verbs = set()
     for d in parsed.values():
         all_verbs |= set(d.keys())
 
     for verb in sorted(all_verbs):
-        p99_kube  = avg_ms(parsed['kube_p99'].get(verb, []))
-        p50_kube  = avg_ms(parsed['kube_p50'].get(verb, []))
-        qps_kube  = avg(parsed['qps_kube'].get(verb, []))
+        p99 = avg_ms(parsed['kube_p99'].get(verb, []))
+        p50 = avg_ms(parsed['kube_p50'].get(verb, []))
+        avg_lat = avg_ms(parsed['kube_avg'].get(verb, []))
+        qps   = avg(parsed['qps_kube'].get(verb, []))
 
         writer.writerow([
             verb,
-            f"{p99_kube:.2f}",
-            f"{p50_kube:.2f}",
-            f"{qps_kube:.2f}"
+            f"{p99:.2f}",
+            f"{p50:.2f}",
+            f"{avg_lat:.2f}",
+            f"{qps:.2f}"
         ])
 
-print("API server p99/p50 latency and average QPS in the past 10 minutes have been written to:", csv_file)
+print("Kubernetes API Server latency (p99/p50/avg) and average QPS in the past 10 minutes have been written to:", csv_file)
