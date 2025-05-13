@@ -40,11 +40,13 @@ done
 
 python3 ./script/getmetrics_cpuram_time.py
 echo "calc average time $(date +'%s.%N')" >> number.txt
-python3 ./script/getmetrics_cpuram_average10.py
+python3 ./script/getmetrics_cpuram_average10_.py
+python3 ./script/getmetrics_latency_average10_karmada.py
 
 for ip in $(cat node_exec); do 
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_latency_average10.py
 done
 
 echo "========== Kubernetes Status for cluster0 ==========" > clusterstatus.txt

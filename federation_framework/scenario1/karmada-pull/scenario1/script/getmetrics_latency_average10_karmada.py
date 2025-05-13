@@ -57,10 +57,23 @@ latency_q = {
           by (le, verb)
         )
     ''',
+    'karmada_p99':'''
+        histogram_quantile(0.99,
+          sum(rate(apiserver_request_duration_seconds_bucket{job="karmada-apiserver"}[1m]))
+          by (le, verb)
+        )
+    ''',
+    'karmada_p50':'''
+        histogram_quantile(0.50,
+          sum(rate(apiserver_request_duration_seconds_bucket{job="karmada-apiserver"}[1m]))
+          by (le, verb)
+        )
+    ''',
 }
 
 qps_q = {
     'kube':   'sum(rate(apiserver_request_total{job="kubernetes-apiserver"}[1m])) by (verb)',
+    'karmada':'sum(rate(apiserver_request_total{job="karmada-apiserver"}[1m])) by (verb)',
 }
 
 # --- Fetch data ---
@@ -94,8 +107,11 @@ with open(csv_file, mode='w', newline='') as f:
     writer.writerow([
         "verb",
         "latency_p99_kubernetes_ms",
+        "latency_p99_karmada_ms",
         "latency_p50_kubernetes_ms",
-        "avg_qps_kubernetes"
+        "latency_p50_karmada_ms",
+        "avg_qps_kubernetes",
+        "avg_qps_karmada"
     ])
 
     # All possible HTTP verbs
@@ -105,14 +121,20 @@ with open(csv_file, mode='w', newline='') as f:
 
     for verb in sorted(all_verbs):
         p99_kube  = avg_ms(parsed['kube_p99'].get(verb, []))
+        p99_karm  = avg_ms(parsed['karmada_p99'].get(verb, []))
         p50_kube  = avg_ms(parsed['kube_p50'].get(verb, []))
+        p50_karm  = avg_ms(parsed['karmada_p50'].get(verb, []))
         qps_kube  = avg(parsed['qps_kube'].get(verb, []))
+        qps_karm  = avg(parsed['qps_karmada'].get(verb, []))
 
         writer.writerow([
             verb,
             f"{p99_kube:.2f}",
+            f"{p99_karm:.2f}",
             f"{p50_kube:.2f}",
-            f"{qps_kube:.2f}"
+            f"{p50_karm:.2f}",
+            f"{qps_kube:.2f}",
+            f"{qps_karm:.2f}"
         ])
 
 print("API server p99/p50 latency and average QPS in the past 10 minutes have been written to:", csv_file)
