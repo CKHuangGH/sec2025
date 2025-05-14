@@ -29,7 +29,7 @@ bash ./script/copy.sh $number
 for ip in $(cat node_exec)
 do
 	ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh $number
-	scp root@$ip:/root/prom-$number/ /root/prom-$number-member/
+	scp -r root@$ip:/root/prom-$number/ /root/prom-$number-member/
 	j=$((j+1))	
 done
 

@@ -58,12 +58,14 @@ tail -n +2 node_ip_all > node_ip
 
 while IFS= read -r ip_address; do
   scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/karmada-pull/node_ip_all root@$ip_address:/root/ &
-  scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/karmada-pull/ntp.sh root@$ip_address:/root/
+  scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/karmada-pull/ntp.sh root@$ip_address:/root/ &
 done < "node_ip_all"
+
+wait
 
 while IFS= read -r ip_address; do
   ssh -o StrictHostKeyChecking=no root@$ip_address mkdir /var/log/ntpsec
-  ssh -o StrictHostKeyChecking=no root@$ip_address bash /root/ntp.sh &
+  ssh -o StrictHostKeyChecking=no root@$ip_address "bash /root/ntp.sh &"
 done < "node_ip_all"
 
 while IFS= read -r ip_address; do
