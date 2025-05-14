@@ -27,85 +27,112 @@ def query_prometheus_range(query, start, end, step):
     return resp.json()['data']['result']
 
 def avg_ms(values):
-    """
-    Mean of a list of durations in seconds, converted to milliseconds.
-    Returns 0.0 if list empty.
-    """
+    """Calculate mean of durations in seconds and convert to milliseconds."""
     if not values:
         return 0.0
     return sum(values) / len(values) * 1000
 
 def avg(values):
-    """
-    Arithmetic mean of a list of numbers.
-    Returns 0.0 if list empty.
-    """
+    """Calculate arithmetic mean of a list of numbers."""
     if not values:
         return 0.0
     return sum(values) / len(values)
 
-# === 時間設定 ===
+# Time window and step for Prometheus queries
 WINDOW   = timedelta(minutes=10)
 STEP     = "5s"
 now      = datetime.now()
 end_ts   = int(now.timestamp())
 start_ts = int((now - WINDOW).timestamp())
 
-# === Prometheus API URL ===
-local_ip            = get_local_ip()
+# Build Prometheus API URL
+local_ip             = get_local_ip()
 PROMETHEUS_RANGE_URL = f"http://{local_ip}:30090/api/v1/query_range"
 
-# === 需要查詢的 jobs ===
+# Jobs to query
 jobs = [
     "kube-controller-manager",
     "karmada-controller-manager",
 ]
 
-# === 定義各種 metric 的 PromQL 範本 ===
+# Define the metrics we want to collect
 metric_types = {
-    'p99': """
+    # work duration latency metrics
+    'p99_work': """
       histogram_quantile(0.99,
         sum(rate(workqueue_work_duration_seconds_bucket{{job="{job}"}}[1m]))
         by (le, name)
       )
     """,
-    'p50': """
+    'p50_work': """
       histogram_quantile(0.50,
         sum(rate(workqueue_work_duration_seconds_bucket{{job="{job}"}}[1m]))
         by (le, name)
       )
     """,
-    'avg': """
+    'avg_work': """
       sum(rate(workqueue_work_duration_seconds_sum{{job="{job}"}}[1m]))
       by (name)
       /
       sum(rate(workqueue_work_duration_seconds_count{{job="{job}"}}[1m]))
       by (name)
     """,
-    'rate': """
+    'rate_work': """
       sum(rate(workqueue_work_duration_seconds_count{{job="{job}"}}[1m]))
+      by (name)
+    """,
+
+    # queue latency metrics
+    'p99_queue': """
+      histogram_quantile(0.99,
+        sum(rate(workqueue_queue_duration_seconds_bucket{{job="{job}"}}[1m]))
+        by (le, name)
+      )
+    """,
+    'p50_queue': """
+      histogram_quantile(0.50,
+        sum(rate(workqueue_queue_duration_seconds_bucket{{job="{job}"}}[1m]))
+        by (le, name)
+      )
+    """,
+    'avg_queue': """
+      sum(rate(workqueue_queue_duration_seconds_sum{{job="{job}"}}[1m]))
+      by (name)
+      /
+      sum(rate(workqueue_queue_duration_seconds_count{{job="{job}"}}[1m]))
+      by (name)
+    """,
+
+    # retry rate metric
+    'rate_retries': """
+      sum(rate(workqueue_retries_total{{job="{job}"}}[1m]))
+      by (name)
+    """,
+
+    # average queue depth over the last minute
+    'avg_depth': """
+      avg_over_time(workqueue_depth{{job="{job}"}}[1m])
       by (name)
     """
 }
 
-# === 組合所有 job 與 metric 的 queries ===
+# Construct PromQL queries for each job and metric
 queries = {}
 for job in jobs:
     for mtype, tmpl in metric_types.items():
         key = f"{job}-{mtype}"
         queries[key] = tmpl.format(job=job)
 
-# === 從 Prometheus 抓取原始資料 ===
+# Fetch raw data from Prometheus
 raw = {
     metric_key: query_prometheus_range(q, start_ts, end_ts, STEP)
     for metric_key, q in queries.items()
 }
 
-# === 解析資料結構：parsed[job][metric_type] = { name: [values] } ===
+# Parse data into parsed[job][metric_type] = { controller_name: [values] }
 parsed = {job: {mt: {} for mt in metric_types} for job in jobs}
-
 for metric_key, series_list in raw.items():
-    # 後 rsplit 一次，保留完整 job 名稱
+    # Split from the right to keep the full job name intact
     job, mtype = metric_key.rsplit('-', 1)
     target = parsed[job][mtype]
     for series in series_list:
@@ -119,31 +146,48 @@ for metric_key, series_list in raw.items():
             except (ValueError, TypeError):
                 continue
 
-# === 寫入 CSV，並跳過 rate 平均為 0 的 controller ===
-output = "/root/controller_metrics_active.csv"
+# Write results to CSV, skipping controllers with zero work rate
+output = "/root/controller_extended_metrics.csv"
 with open(output, 'w', newline='') as f:
     writer = csv.writer(f)
-    writer.writerow(["job", "name", "p99_ms", "p50_ms", "avg_ms", "rate_per_sec"])
+    writer.writerow([
+        "job", "name",
+        "p99_work_ms", "p50_work_ms", "avg_work_ms", "rate_work_per_sec",
+        "p99_queue_ms", "p50_queue_ms", "avg_queue_ms",
+        "rate_retries_per_sec", "avg_depth"
+    ])
 
     for job in jobs:
         all_names = set().union(*parsed[job].values())
         for name in sorted(all_names):
-            rate_vals = parsed[job]['rate'].get(name, [])
-            avg_rate  = avg(rate_vals)
-            if avg_rate == 0.0:
+            work_rate = avg(parsed[job]['rate_work'].get(name, []))
+            if work_rate == 0.0:
+                # skip inactive controllers
                 continue
 
-            p99_ms     = avg_ms(parsed[job]['p99'].get(name, []))
-            p50_ms     = avg_ms(parsed[job]['p50'].get(name, []))
-            avg_lat_ms = avg_ms(parsed[job]['avg'].get(name, []))
+            p99_work     = avg_ms(parsed[job]['p99_work'].get(name, []))
+            p50_work     = avg_ms(parsed[job]['p50_work'].get(name, []))
+            avg_work     = avg_ms(parsed[job]['avg_work'].get(name, []))
+
+            p99_queue    = avg_ms(parsed[job]['p99_queue'].get(name, []))
+            p50_queue    = avg_ms(parsed[job]['p50_queue'].get(name, []))
+            avg_queue    = avg_ms(parsed[job]['avg_queue'].get(name, []))
+
+            retry_rate   = avg(parsed[job]['rate_retries'].get(name, []))
+            avg_depth    = avg(parsed[job]['avg_depth'].get(name, []))
 
             writer.writerow([
                 job,
                 name,
-                f"{p99_ms:.2f}",
-                f"{p50_ms:.2f}",
-                f"{avg_lat_ms:.2f}",
-                f"{avg_rate:.2f}"
+                f"{p99_work:.2f}",
+                f"{p50_work:.2f}",
+                f"{avg_work:.2f}",
+                f"{work_rate:.2f}",
+                f"{p99_queue:.2f}",
+                f"{p50_queue:.2f}",
+                f"{avg_queue:.2f}",
+                f"{retry_rate:.2f}",
+                f"{avg_depth:.2f}"
             ])
 
-print("Active controllers metrics written to:", output)
+print("Extended controller metrics written to:", output)
