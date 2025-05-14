@@ -15,8 +15,6 @@ echo $number >> number.txt
 
 sudo tcpdump -i ens3 -nn -q '(src net 10.176.0.0/16 and dst net 10.176.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
 
-# sudo tcpdump -i ens3 -nn -q '(src net 10.144.0.0/16 and dst net 10.144.0.0/16) and not arp and not tcp port 22 and not icmp and tcp[((tcp[12] & 0xf0) >> 2):4] != 0' >> cross &
-
 sleep 120
 
 echo "start deployment $(date +'%s.%N')" >> number.txt
@@ -28,8 +26,6 @@ cp ./number.txt /root/number.txt
 bash ./script/$number.sh > /dev/null 2>&1 &
 
 for ip in $(cat node_exec); do 
-  # ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_svc.sh $SVC_THRESHOLD &
-  # ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_sa.sh $SA_THRESHOLD &
   ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/checking_pod.sh $POD_THRESHOLD
 done
 
@@ -38,15 +34,28 @@ for (( i=900; i>0; i-- )); do
     sleep 1
 done
 
-python3 ./script/getmetrics_cpuram_time.py
-echo "calc average time $(date +'%s.%N')" >> number.txt
-python3 ./script/getmetrics_cpuram_average10_.py
-python3 ./script/getmetrics_latency_average10_karmada.py
+python3 ./script/getmetrics_cpuram_time.py #ok
+
+echo "calc cpuram average time $(date +'%s.%N')" >> number.txt
+python3 ./script/getmetrics_cpuram_average10.py #ok
+
+echo "calc management karmada api average time $(date +'%s.%N')" >> number.txt
+python3 ./script/getmetrics_latency_average10_karmada.py #ok
+
+echo "calc management karmada controller average time $(date +'%s.%N')" >> number.txt
+python3 ./script/getmetrics_controller_average10_karmada.py #ok
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_latency_average10.py
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py #ok
+
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc cpuram average time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py #ok
+
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s api time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_latency_average10.py #ok
+
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s controller time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_controller_average10.py #ok
 done
 
 echo "========== Kubernetes Status for cluster0 ==========" > clusterstatus.txt

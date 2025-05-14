@@ -58,62 +58,74 @@ jobs = [
 # Define the metrics we want to collect
 metric_types = {
     # work duration latency metrics
-    'p99_work': """
-      histogram_quantile(0.99,
-        sum(rate(workqueue_work_duration_seconds_bucket{{job="{job}"}}[1m]))
-        by (le, name)
-      )
-    """,
-    'p50_work': """
-      histogram_quantile(0.50,
-        sum(rate(workqueue_work_duration_seconds_bucket{{job="{job}"}}[1m]))
-        by (le, name)
-      )
-    """,
-    'avg_work': """
-      sum(rate(workqueue_work_duration_seconds_sum{{job="{job}"}}[1m]))
-      by (name)
-      /
-      sum(rate(workqueue_work_duration_seconds_count{{job="{job}"}}[1m]))
-      by (name)
-    """,
-    'rate_work': """
-      sum(rate(workqueue_work_duration_seconds_count{{job="{job}"}}[1m]))
-      by (name)
-    """,
+    'p99_work':  (
+        'histogram_quantile(0.99, '
+        'sum by (le, name) ('
+        'rate(workqueue_work_duration_seconds_bucket{{job="{job}"}}[1m])'
+        '))'
+    ),
+    'p50_work':  (
+        'histogram_quantile(0.50, '
+        'sum by (le, name) ('
+        'rate(workqueue_work_duration_seconds_bucket{{job="{job}"}}[1m])'
+        '))'
+    ),
+    'avg_work': (
+        '('
+            'sum by (name) ('
+                'rate(workqueue_work_duration_seconds_sum{{job="{job}"}}[1m])'
+            ')'
+        ') / ('
+            'sum by (name) ('
+                'rate(workqueue_work_duration_seconds_count{{job="{job}"}}[1m])'
+            ')'
+        ')'
+    ),
+    'rate_work': (
+        'sum by (name) ('
+        'rate(workqueue_work_duration_seconds_count{{job="{job}"}}[1m])'
+        ')'
+    ),
 
     # queue latency metrics
-    'p99_queue': """
-      histogram_quantile(0.99,
-        sum(rate(workqueue_queue_duration_seconds_bucket{{job="{job}"}}[1m]))
-        by (le, name)
-      )
-    """,
-    'p50_queue': """
-      histogram_quantile(0.50,
-        sum(rate(workqueue_queue_duration_seconds_bucket{{job="{job}"}}[1m]))
-        by (le, name)
-      )
-    """,
-    'avg_queue': """
-      sum(rate(workqueue_queue_duration_seconds_sum{{job="{job}"}}[1m]))
-      by (name)
-      /
-      sum(rate(workqueue_queue_duration_seconds_count{{job="{job}"}}[1m]))
-      by (name)
-    """,
+    'p99_queue': (
+        'histogram_quantile(0.99, '
+        'sum by (le, name) ('
+        'rate(workqueue_queue_duration_seconds_bucket{{job="{job}"}}[1m])'
+        '))'
+    ),
+    'p50_queue': (
+        'histogram_quantile(0.50, '
+        'sum by (le, name) ('
+        'rate(workqueue_queue_duration_seconds_bucket{{job="{job}"}}[1m])'
+        '))'
+    ),
+    'avg_queue': (
+        '('
+            'sum by (name) ('
+                'rate(workqueue_queue_duration_seconds_sum{{job="{job}"}}[1m])'
+            ')'
+        ') / ('
+            'sum by (name) ('
+                'rate(workqueue_queue_duration_seconds_count{{job="{job}"}}[1m])'
+            ')'
+        ')'
+    ),
 
     # retry rate metric
-    'rate_retries': """
-      sum(rate(workqueue_retries_total{{job="{job}"}}[1m]))
-      by (name)
-    """,
+    'rate_retries': (
+        'sum by (name) ('
+        'rate(workqueue_retries_total{{job="{job}"}}[1m])'
+        ')'
+    ),
 
     # average queue depth over the last minute
-    'avg_depth': """
-      avg_over_time(workqueue_depth{{job="{job}"}}[1m])
-      by (name)
-    """
+    # avg_over_time
+    'avg_depth': (
+        'avg_over_time('
+        'workqueue_depth{{job="{job}"}}[1m]'
+        ')'
+    ),
 }
 
 # Construct PromQL queries for each job and metric
@@ -161,9 +173,9 @@ with open(output, 'w', newline='') as f:
         all_names = set().union(*parsed[job].values())
         for name in sorted(all_names):
             work_rate = avg(parsed[job]['rate_work'].get(name, []))
-            if work_rate == 0.0:
-                # skip inactive controllers
-                continue
+            # if work_rate == 0.0:
+            #     # skip inactive controllers
+            #     continue
 
             p99_work     = avg_ms(parsed[job]['p99_work'].get(name, []))
             p50_work     = avg_ms(parsed[job]['p50_work'].get(name, []))

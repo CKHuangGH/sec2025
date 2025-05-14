@@ -59,7 +59,6 @@ latency_q = {
     ''',
 }
 
-# 新增：Kubernetes API Server 平均延遲
 # avg = sum(rate(..._sum[1m])) / sum(rate(..._count[1m])) by (verb)
 avg_latency_q = {
     'kube_avg': '''

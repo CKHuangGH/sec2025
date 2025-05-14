@@ -71,8 +71,6 @@ latency_q = {
     ''',
 }
 
-# 新增：平均延遲 (average latency) 的計算
-# 公式：sum(rate(..._sum[1m])) / sum(rate(..._count[1m])) by (verb)
 avg_latency_q = {
     'kube_avg': f'''
         sum(rate(apiserver_request_duration_seconds_sum{{job="kubernetes-apiserver"}}[1m]))
