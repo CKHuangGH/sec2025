@@ -7,7 +7,7 @@ from datetime import datetime
 en.set_config(ansible_forks=100)
 
 # === Grid'5000 reservation settings ===
-name = "s1-1-now-1"
+name = "s1-1-now-3"
 clusters = "gros"
 site = "nancy"
 duration = "10:00:00"

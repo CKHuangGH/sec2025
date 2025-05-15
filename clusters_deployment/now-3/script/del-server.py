@@ -7,10 +7,10 @@ from datetime import datetime
 en.set_config(ansible_forks=100)
 
 # === Grid'5000 reservation settings ===
-name = "s1-1-now-1"
+name = "s1-1-now-3"
 clusters = "gros"
 site = "nancy"
-duration = "10:00:00"
+duration = "12:00:00"
 today = datetime.now().strftime("%Y-%m-%d")
 reservation_time = today + " 19:01:00"
 name_job = name + clusters
@@ -29,21 +29,4 @@ conf = (
     .finalize()
 )
 provider = en.G5k(conf)
-roles, networks = provider.init()
-roles = en.sync_info(roles, networks)
-print(provider)
-print(roles)
-print(networks)
-
-# === Save physical host and network info for reuse ===
-with open("reserved_management.json", "w") as f:
-    f.write(jsonpickle.encode(roles))
-
-with open("reserved_management_networks.json", "w") as f:
-    f.write(jsonpickle.encode(networks))
-    
-for i in range(10, 0, -1):
-    print(f"Remaining: {i} seconds")
-    time.sleep(1)
-
-print("Reservation management: physical nodes and network configuration.")
+provider.destroy()
