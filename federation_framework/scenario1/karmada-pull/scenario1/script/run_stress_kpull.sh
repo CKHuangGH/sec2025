@@ -35,47 +35,56 @@ for (( i=900; i>0; i-- )); do
 done
 
 python3 ./script/getmetrics_cpuram_time.py #ok
+sleep 2
 
 echo "calc cpuram average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_cpuram_average10.py #ok
+sleep 2
 
 echo "calc management karmada api average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_latency_average10_karmada.py #ok
+sleep 2
 
 echo "calc management karmada controller average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_controller_average10_karmada.py #ok
+sleep 2
 
 for ip in $(cat node_exec); do 
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py #ok
+  sleep 2
 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc cpuram average time"
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py #ok
+  sleep 2
 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s api time"
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_latency_average10.py #ok
+  sleep 2
 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s controller time"
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_controller_average10.py #ok
+  sleep 2
 done
 
 echo "========== Kubernetes Status for cluster0 ==========" > clusterstatus.txt
 echo "" >> clusterstatus.txt
-
+sleep 2
 echo "== Nodes ==" >> clusterstatus.txt
 kubectl get nodes --context=cluster0 >> clusterstatus.txt 2>&1
 echo "" >> clusterstatus.txt
-
+sleep 2
 echo "== Pods (All namespaces) ==" >> clusterstatus.txt
 kubectl get pods --all-namespaces --context=cluster0 >> clusterstatus.txt 2>&1
 echo "" >> clusterstatus.txt
-
+sleep 2
 echo "========== Kubernetes Status for cluster1 ==========" >> clusterstatus.txt
 echo "" >> clusterstatus.txt
-
+sleep 2
 echo "== Nodes ==" >> clusterstatus.txt
 kubectl get nodes --context=cluster1 >> clusterstatus.txt 2>&1
 echo "" >> clusterstatus.txt
-
+sleep 2
 echo "== Pods (All namespaces) ==" >> clusterstatus.txt
 kubectl get pods --all-namespaces --context=cluster1 >> clusterstatus.txt 2>&1
 echo "" >> clusterstatus.txt
+sleep 2

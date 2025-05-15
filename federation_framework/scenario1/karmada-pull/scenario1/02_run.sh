@@ -2,7 +2,7 @@
 
 read -p "please enter the test number(0, 60, 120, 180, 240, 300): " number
 
-for (( times=0; times<5; times++ )); do
+for (( times=0; times<7; times++ )); do
     bash ./script/init_reg.sh
     sleep 30
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
@@ -21,7 +21,7 @@ for (( times=0; times<5; times++ )); do
 	    ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
     done
     rm -rf results
-    sleep 30
+    sleep 60
 done
 
 bash ./script/copy.sh $number
