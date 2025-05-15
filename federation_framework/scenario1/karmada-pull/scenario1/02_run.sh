@@ -2,7 +2,7 @@
 
 read -p "please enter the test number(0, 60, 120, 180, 240, 300): " number
 
-for (( times=0; times<2; times++ )); do
+for (( times=0; times<5; times++ )); do
     bash ./script/init_reg.sh
     sleep 30
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
