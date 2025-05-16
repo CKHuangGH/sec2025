@@ -40,16 +40,15 @@ prometheus:
         kubernetes_sd_configs:
           - role: endpoints
             namespaces:
-              names: ["kube-system"]     # API Server Service 在 kube-system
+              names: ["default"]
         scheme: https
         tls_config:
           insecure_skip_verify: true
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        metrics_path: /metrics        # 默认 API Server 指标路径
+        metrics_path: /metrics
         relabel_configs:
-          # 只保留 name 里带 apiserver 的 endpoint
-          - source_labels: [__meta_kubernetes_service_label_component]
-            regex: apiserver
+          - source_labels: [__meta_kubernetes_service_name]
+            regex: kubernetes
             action: keep
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
