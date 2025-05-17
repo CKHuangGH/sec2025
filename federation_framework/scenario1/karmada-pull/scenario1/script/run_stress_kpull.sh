@@ -59,9 +59,9 @@ for ip in $(cat node_exec); do
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py #ok
   sleep 2
 
-  # ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s api time"
-  # ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_latency_average10.py #ok
-  # sleep 2
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s api time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_latency_average10.py #ok
+  sleep 2
 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc member k8s controller time"
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_controller_average10.py #ok
