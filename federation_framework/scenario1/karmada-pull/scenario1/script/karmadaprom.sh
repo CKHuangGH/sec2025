@@ -176,7 +176,7 @@ echo "Found release: $RELEASE_NAME"
 helm upgrade "$RELEASE_NAME" prometheus-community/kube-prometheus-stack \
   --version 70.4.2 \
   --namespace monitoring \
-  --values /root/sec2025/federation_framework/scenario1/karmada-pull/values.yaml \
+  --values /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/values.yaml \
   --set grafana.enabled=false \
   --set alertmanager.enabled=false \
   --set prometheus.service.type=NodePort \

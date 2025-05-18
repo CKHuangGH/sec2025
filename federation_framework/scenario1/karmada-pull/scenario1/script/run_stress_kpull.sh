@@ -36,9 +36,6 @@ for (( i=900; i>0; i-- )); do
     sleep 1
 done
 
-python3 ./script/getmetrics_cpuram_time.py #ok
-sleep 2
-
 echo "calc cpuram average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_cpuram_average10.py #ok
 sleep 2
@@ -52,8 +49,6 @@ python3 ./script/getmetrics_controller_average10_karmada.py #ok
 sleep 2
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py #ok
-  sleep 2
 
   ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/timesave.sh "calc cpuram average time"
   ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_average10_member.py #ok
