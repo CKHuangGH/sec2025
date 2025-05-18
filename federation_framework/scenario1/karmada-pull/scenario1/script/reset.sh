@@ -13,7 +13,7 @@ fi
 
 kubectl karmada unregister cluster1 --cluster-kubeconfig /root/.kube/cluster1
 
-sleep 30
+sleep 10
 
 echo "y" | kubectl karmada deinit
 

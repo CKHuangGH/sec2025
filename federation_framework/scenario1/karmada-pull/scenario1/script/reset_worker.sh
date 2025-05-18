@@ -1,5 +1,15 @@
 #!/bin/bash
 
+kubectl delete secret karmada-kubeconfig -n karmada-system
+
+kubectl delete sa karmada-agent-sa -n karmada-system
+
+kubectl delete deployment karmada-agent -n karmada-system
+
+kubectl delete ns karmada-cluster
+
+kubectl delete ns karmada-system
+
 rm -f /root/time.txt
 
 rm -f /root/number.txt
