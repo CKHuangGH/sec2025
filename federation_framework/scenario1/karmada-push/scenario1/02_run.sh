@@ -8,14 +8,14 @@ for (( times=0; times<7; times++ )); do
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
     mkdir results
     bash ./script/karmadaprom.sh
-    sleep 30
+    sleep 60
     bash ./script/run_stress_kpull.sh $number
     sleep 30
     bash ./script/delete.sh $number
-    sleep 60
+    sleep 30
     bash ./script/getdocker.sh $number $times
     bash ./script/reset.sh
-    sleep 60
+    sleep 30
     for ip in $(cat node_exec)
     do 
 	    ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
