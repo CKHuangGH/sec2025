@@ -1,5 +1,5 @@
 number=$1
-timess=$2
+time=$2
 
 bash copy.sh $number
 

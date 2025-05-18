@@ -24,7 +24,7 @@ for (( times=0; times<7; times++ )); do
     sleep 10
     for ip in $(cat node_exec)
     do 
-	    ssh root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time.py
+	    ssh root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/getmetrics_cpuram_time_member.py
     done
     sleep 10
     bash ./script/getdocker.sh $number $times

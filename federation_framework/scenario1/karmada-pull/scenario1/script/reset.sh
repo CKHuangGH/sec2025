@@ -25,6 +25,8 @@ rm -f ../number.txt
 
 rm -f ../cross
 
+kubectl delete ns monitoring
+
 while true; do
     running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
     echo "Karmada CP pod: $running_pods"

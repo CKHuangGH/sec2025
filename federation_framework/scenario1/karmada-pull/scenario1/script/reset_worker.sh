@@ -10,6 +10,8 @@ kubectl delete ns karmada-cluster
 
 kubectl delete ns karmada-system
 
+kubectl delete ns monitoring
+
 rm -f /root/time.txt
 
 rm -f /root/number.txt
