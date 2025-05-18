@@ -7,8 +7,8 @@ while read -r ip; do
     if [[ "$ip" =~ ^[[:space:]]*$ || "$ip" =~ ^\s*# ]]; then
         continue
     fi
-    ping -c 2 "$ip" > number.txt
-done < "node_list"
+    ping -c 60 "$ip" > number.txt
+done < "node_exec"
 
 echo $number
 echo $number >> number.txt
