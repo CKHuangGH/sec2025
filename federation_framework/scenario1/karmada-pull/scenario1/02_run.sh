@@ -29,13 +29,13 @@ for (( times=0; times<7; times++ )); do
     sleep 10
     bash ./script/getdocker.sh $number $times
     bash ./script/copyprom.sh $number $times
-    bash ./script/reset.sh
+    bash ./script/reset.sh $number
     bash ./script/deleteprometheus.sh
     sleep 60
     for ip in $(cat node_exec)
     do 
-	    ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh
-        ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/deleteprometheus.sh
+	    ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/reset_worker.sh $number
+        ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/deleteprometheus.sh 
     done
     rm -rf results
     sleep 60

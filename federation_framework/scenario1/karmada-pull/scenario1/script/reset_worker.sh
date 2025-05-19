@@ -1,5 +1,7 @@
 #!/bin/bash
 
+number=$1
+
 kubectl delete secret karmada-kubeconfig -n karmada-system
 
 kubectl delete sa karmada-agent-sa -n karmada-system
@@ -27,6 +29,8 @@ rm -f /root/controller_extended_metrics.csv
 rm -f /etc/karmada/karmada-agent.conf
 
 rm -f /etc/karmada/pki/ca.crt
+
+rm -rf prom-$number/
 
 while true; do
     running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
