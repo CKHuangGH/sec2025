@@ -140,7 +140,7 @@ kubectl apply -f ./script/secret.yaml --kubeconfig /etc/karmada/karmada-apiserve
 KUBECONFIG_PATH="/etc/karmada/karmada-apiserver.config"
 SECRET_NAME="prometheus"
 NAMESPACE="monitoring"
-VALUES_FILE="/root/sec2025/federation_framework/scenario1/karmada-push/values.yaml"
+VALUES_FILE="/root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/values.yaml"
 
 # Retrieve and decode token
 TOKEN=$(kubectl get secret "$SECRET_NAME" -n "$NAMESPACE" \
