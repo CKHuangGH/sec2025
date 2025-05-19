@@ -16,7 +16,7 @@ for (( times=0; times<7; times++ )); do
     mkdir results
     bash ./script/karmadaprom.sh
     sleep 60
-    bash ./script/run_stress_kpull.sh $number
+    bash ./script/run_stress.sh $number
     sleep 30
     bash ./script/delete.sh $number
     sleep 60 
