@@ -1,34 +1,15 @@
 #!/bin/bash
 
-NAMESPACE="monitoring"
-MAX_RETRIES=5
-RETRY_INTERVAL=5
-
-RELEASE_NAME=$(helm list -n "$NAMESPACE" -o json | jq -r '.[] | select(.name | startswith("kube-prometheus-stack")) | .name')
-
-helm uninstall "$RELEASE_NAME" -n "$NAMESPACE"
+# Uninstall all Helm releases related to Prometheus across all namespaces
+echo "🔍 Searching for Prometheus-related Helm releases..."
+helm list -A -o json | jq -r '.[] | select(.name | test("prometheus")) | "\(.name) \(.namespace)"' | while read release ns; do
+  echo "  🔥 Uninstalling Helm release '$release' in namespace '$ns'"
+  helm uninstall "$release" -n "$ns"
+done
 
 sleep 30
 
-RETRY=0
-while true; do
-  helm list -n "$NAMESPACE" -o json | jq -e --arg name "$RELEASE_NAME" '.[] | select(.name == $name)' > /dev/null 2>&1
-  if [[ $? -ne 0 ]]; then
-    echo "✅ Release '$RELEASE_NAME' has been successfully deleted."
-    break
-  fi
-
-  if [[ $RETRY -ge $MAX_RETRIES ]]; then
-    echo "❌ Failed to delete Helm release after $MAX_RETRIES attempts."
-    exit 1
-  fi
-
-  echo "⌛ Release still exists. Retrying in ${RETRY_INTERVAL}s... (Attempt $((RETRY + 1))/$MAX_RETRIES)"
-  sleep "$RETRY_INTERVAL"
-  helm uninstall "$RELEASE_NAME" -n "$NAMESPACE"
-  RETRY=$((RETRY + 1))
-done
-
+# Delete all resource types containing "prometheus" in the name
 for TYPE in deploy svc pod pvc configmap secret statefulset daemonset replicaset serviceaccount job cronjob ingress role rolebinding; do
   echo "🔍 Checking $TYPE resources for prometheus-related names..."
   kubectl get $TYPE --all-namespaces --no-headers 2>/dev/null | grep prometheus | awk '{print $1, $2}' | while read ns name; do
@@ -37,6 +18,7 @@ for TYPE in deploy svc pod pvc configmap secret statefulset daemonset replicaset
   done
 done
 
+# Delete cluster-wide roles and bindings
 for TYPE in clusterrole clusterrolebinding; do
   echo "🔍 Checking $TYPE for prometheus-related names..."
   kubectl get $TYPE --no-headers 2>/dev/null | grep prometheus | awk '{print $1}' | while read name; do
@@ -45,6 +27,7 @@ for TYPE in clusterrole clusterrolebinding; do
   done
 done
 
+# Delete webhook configurations
 for TYPE in mutatingwebhookconfiguration validatingwebhookconfiguration; do
   echo "🔍 Checking $TYPE for prometheus-related names..."
   kubectl get $TYPE --no-headers 2>/dev/null | grep prometheus | awk '{print $1}' | while read name; do
