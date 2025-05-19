@@ -4,7 +4,7 @@ from enoslib.api import generate_inventory, run_ansible
 from enoslib.infra.enos_vmong5k.configuration import Configuration
 import time
 
-en.set_config(ansible_forks=100)
+en.set_config(ansible_forks=300)
 
 # === Load saved reservation info ===
 with open("reserved_management.json", "r") as f:
