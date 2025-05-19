@@ -6,14 +6,6 @@ RETRY_INTERVAL=5
 
 RELEASE_NAME=$(helm list -n "$NAMESPACE" -o json | jq -r '.[] | select(.name | startswith("kube-prometheus-stack")) | .name')
 
-if [[ -z "$RELEASE_NAME" ]]; then
-  echo "❌ No Prometheus release found in namespace '$NAMESPACE'."
-  exit 1
-fi
-
-echo "✅ Found Prometheus Helm release: $RELEASE_NAME"
-
-echo "🔧 Uninstalling Helm release '$RELEASE_NAME'..."
 helm uninstall "$RELEASE_NAME" -n "$NAMESPACE"
 
 sleep 30

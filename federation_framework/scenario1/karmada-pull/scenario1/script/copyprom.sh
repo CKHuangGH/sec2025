@@ -1,7 +1,7 @@
 number=$1
 time=$2
 
-bash copy.sh $number
+bash /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/script/copy.sh $number
 
 for ip in $(cat node_exec)
 do
