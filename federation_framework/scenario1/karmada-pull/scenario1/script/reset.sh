@@ -19,9 +19,9 @@ sleep 10
 
 echo "y" | kubectl karmada deinit
 
-rm -rf prom-$number/
+rm -rf /root/prom-$number/
 
-rm -rf prom-$number-member
+rm -rf /root/prom-$number-member/
 
 rm -rf /var/lib/karmada-etcd
 

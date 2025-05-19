@@ -30,7 +30,7 @@ rm -f /etc/karmada/karmada-agent.conf
 
 rm -f /etc/karmada/pki/ca.crt
 
-rm -rf prom-$number/
+rm -rf /root/prom-$number/
 
 while true; do
     running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
