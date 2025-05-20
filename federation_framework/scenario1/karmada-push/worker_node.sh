@@ -9,7 +9,7 @@ sleep 30
 sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-scheduler.yaml"
 sleep 30
 sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-controller-manager.yaml"
-sleep 30
+sleep 60
 
 kubectl config use-context cluster$cluster
 helm repo update
