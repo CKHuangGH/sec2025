@@ -22,4 +22,4 @@ mv number.txt /root/sec2025/federation_framework/scenario1/karmada-pull/scenario
 mv clusterstatus.txt /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/results/clusterstatus.txt
 
 sleep 5
-scp -o StrictHostKeyChecking=no -r /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/results chuang@172.16.207.100:/home/chuang/results$number-$time-karmada-pull
+scp -o StrictHostKeyChecking=no -r /root/sec2025/federation_framework/scenario1/karmada-pull/scenario1/results chuang@172.16.79.101:/home/chuang/results$number-$time-karmada-pull
