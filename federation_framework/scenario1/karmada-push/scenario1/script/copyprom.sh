@@ -10,5 +10,5 @@ do
 	j=$((j+1))	
 done
 
-scp -o StrictHostKeyChecking=no -r /root/prom-$number-member/ chuang@172.16.207.100:/home/chuang/prombackup-$number-$time-karmada-push-member
-scp -o StrictHostKeyChecking=no -r /root/prom-$number/ chuang@172.16.207.100:/home/chuang/prombackup-$number-$time-karmada-push
+scp -o StrictHostKeyChecking=no -r /root/prom-$number-member/ chuang@172.16.79.101:/home/chuang/prombackup-$number-$time-karmada-push-member
+scp -o StrictHostKeyChecking=no -r /root/prom-$number/ chuang@172.16.79.101:/home/chuang/prombackup-$number-$time-karmada-push
