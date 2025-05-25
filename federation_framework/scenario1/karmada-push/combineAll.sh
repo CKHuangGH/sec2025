@@ -71,6 +71,7 @@ while IFS= read -r ip_address; do
   scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no -r /root/addon/ root@$ip_address:/root/ &
 done < "node_ip"
 
 wait
