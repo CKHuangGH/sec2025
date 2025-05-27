@@ -1,16 +1,43 @@
 #!/bin/bash
 
-echo "Searching for and terminating bash-related processes..."
-PIDS=$(pgrep -f "toppodwa")
+number=$1
 
-if [ -n "$PIDS" ]; then
-    echo "Found the following processes: $PIDS"
-    kill -9 $PIDS
-    echo "All bash processes have been terminated."
-else
-    echo "No bash processes found."
-fi
+kubectl delete secret karmada-kubeconfig -n karmada-system
 
-rm -f kubetopPodWA.csv
+kubectl delete sa karmada-agent-sa -n karmada-system
 
-clusteradm unjoin --cluster-name cluster1
+kubectl delete deployment karmada-agent -n karmada-system
+
+kubectl delete ns karmada-cluster
+
+kubectl delete ns karmada-system
+
+kubectl delete ns monitoring
+
+rm -f /root/time.txt
+
+rm -f /root/number.txt
+
+rm -f /root/resource_all.csv
+
+rm -f /root/resource_avg_10min.csv
+
+rm -f /root/apiserver_metrics_avg_10min.csv
+
+rm -f /root/controller_extended_metrics.csv
+
+rm -f /etc/karmada/karmada-agent.conf
+
+rm -f /etc/karmada/pki/ca.crt
+
+rm -rf /root/prom-$number/
+
+while true; do
+    running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
+    echo "Karmada member pod: $running_pods"
+    if [ "$running_pods" -eq 0 ]; then
+        break
+    else
+        sleep 1
+    fi
+done

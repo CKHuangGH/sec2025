@@ -15,6 +15,7 @@ for (( times=0; times<7; times++ )); do
     bash ./script/finish.sh
     sleep 30
     mkdir results
+    bash ./script/timedelay.sh
     bash ./script/run_stress.sh $number
     sleep 30
     bash ./script/delete.sh $number
