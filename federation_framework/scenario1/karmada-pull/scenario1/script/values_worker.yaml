@@ -1,6 +1,16 @@
+coreDns:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
 kubelet:
   serviceMonitor:
     enabled: false
+prometheus-node-exporter:
+  enabled: false
 prometheus:
   enabled: true
   prometheusSpec:
