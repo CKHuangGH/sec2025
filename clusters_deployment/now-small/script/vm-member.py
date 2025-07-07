@@ -27,7 +27,7 @@ virt_conf = (
         undercloud=roles["role0"],
         flavour_desc={"core": 16, "mem": 32768},
         image="/home/chuang/images/large_debian02072025.qcow2",
-        macs=list(subnet[0].free_macs)[1:2],
+        macs=list(subnet[0].frㄋee_macs)[1:2],
     )
     .add_machine(
         roles=["member"],
