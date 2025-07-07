@@ -8,8 +8,8 @@ en.set_config(ansible_forks=100)
 
 # === Grid'5000 reservation settings ===
 name = "s1-1-now-small"
-clusters = "paradoxe"
-site = "rennes"
+clusters = "gros"
+site = "nancy"
 duration = "12:00:00"
 today = datetime.now().strftime("%Y-%m-%d")
 reservation_time = today + " 19:01:00"
