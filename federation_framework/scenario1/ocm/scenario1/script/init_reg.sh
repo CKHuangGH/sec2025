@@ -28,5 +28,3 @@ do
 done
 
 sleep 10
-
-./auto.sh

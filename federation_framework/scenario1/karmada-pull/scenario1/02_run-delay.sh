@@ -21,6 +21,8 @@ for (( times=0; times<7; times++ )); do
     sleep 30
     bash ./script/delete.sh $number
     sleep 60 
+    bash ./reset_delay.sh
+    sleep 5
     python3 ./script/getmetrics_cpuram_time.py
     sleep 10
     for ip in $(cat node_exec)

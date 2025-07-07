@@ -11,6 +11,7 @@ for (( times=0; times<7; times++ )); do
     done
     sleep 60
     bash ./script/init_reg.sh
+    bash ./script/auto.sh
     sleep 20
     bash ./script/finish.sh
     sleep 30
