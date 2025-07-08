@@ -40,11 +40,11 @@ echo "calc cpuram average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_cpuram_average10.py #ok
 sleep 2
 
-echo "calc management karmada api average time $(date +'%s.%N')" >> number.txt
+echo "calc management Kubernetes api average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_latency_average10.py #ok
 sleep 2
 
-echo "calc management karmada controller average time $(date +'%s.%N')" >> number.txt
+echo "calc management Kubernetes controller average time $(date +'%s.%N')" >> number.txt
 python3 ./script/getmetrics_controller_average10.py #ok
 sleep 2
 

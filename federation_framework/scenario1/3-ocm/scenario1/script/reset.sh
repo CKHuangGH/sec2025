@@ -13,17 +13,49 @@ else
     echo "No tcpdump processes found."
 fi
 
-kubectl karmada unregister cluster1 --cluster-kubeconfig /root/.kube/cluster1
+sleep 5
 
-sleep 10
+for i in $(seq 1 1); do
+    # Retrieve CSR names that match the pattern "cluster<i>-"
+    csr_names=$(kubectl get csr --no-headers -o custom-columns=NAME:.metadata.name | grep "^cluster${i}-")
+    
+    # If no CSR is found for this cluster number, output a message and continue to the next number.
+    if [ -z "$csr_names" ]; then
+        echo "No CSR found for cluster${i}"
+        continue
+    fi
 
-echo "y" | kubectl karmada deinit
+    # Loop through each CSR name that matches the pattern and delete it.
+    for csr in $csr_names; do
+        echo "Deleting CSR: $csr"
+        kubectl delete csr "$csr"
+    done
+done
+
+kubectl delete mcl cluster1
+
+sleep 5
+
+while true; do
+    echo "clusteradm clean ..."
+    clusteradm clean
+
+    if [ $? -eq 0 ]; then
+        echo "done"
+        break
+    else
+        echo "fail and clean again"
+        sleep 5
+    fi
+done
+sleep 5
+for ((i=1; i<=1; i++)); do
+    kubectl delete ns cluster$i
+done
 
 rm -rf /root/prom-$number/
 
 rm -rf /root/prom-$number-member/
-
-rm -rf /var/lib/karmada-etcd
 
 rm -f /root/number.txt
 
@@ -32,13 +64,3 @@ rm -f ../number.txt
 rm -f ../cross
 
 kubectl delete ns monitoring
-
-while true; do
-    running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
-    echo "Karmada CP pod: $running_pods"
-    if [ "$running_pods" -eq 0 ]; then
-        break
-    else
-        sleep 1
-    fi
-done

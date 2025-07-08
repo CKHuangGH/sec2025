@@ -2,16 +2,6 @@
 
 number=$1
 
-kubectl delete secret karmada-kubeconfig -n karmada-system
-
-kubectl delete sa karmada-agent-sa -n karmada-system
-
-kubectl delete deployment karmada-agent -n karmada-system
-
-kubectl delete ns karmada-cluster
-
-kubectl delete ns karmada-system
-
 kubectl delete ns monitoring
 
 rm -f /root/time.txt
@@ -26,18 +16,6 @@ rm -f /root/apiserver_metrics_avg_10min.csv
 
 rm -f /root/controller_extended_metrics.csv
 
-rm -f /etc/karmada/karmada-agent.conf
-
-rm -f /etc/karmada/pki/ca.crt
-
 rm -rf /root/prom-$number/
 
-while true; do
-    running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
-    echo "Karmada member pod: $running_pods"
-    if [ "$running_pods" -eq 0 ]; then
-        break
-    else
-        sleep 1
-    fi
-done
+clusteradm unjoin --cluster-name cluster1
