@@ -6,7 +6,7 @@ DEV=ens3         # 實體網卡名稱
 IFB=ifb0         # 虛擬中介設備
 DELAY="50ms"
 JITTER="5ms"
-LOSS="5%"
+LOSS="1%"
 
 # === 啟用 IFB ===
 sudo modprobe ifb numifbs=1
