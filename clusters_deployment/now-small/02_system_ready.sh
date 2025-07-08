@@ -31,20 +31,20 @@ scp -r /home/chuang/images_google root@$manage:/root/
 # scp -r /home/chuang/ocm_package root@$manage:/root/
 
 # scenario1
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/ocm/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/karmada-pull/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/karmada-push/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/kubefed/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/3-ocm/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/1-karmada-pull/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/2-karmada-push/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/4-kubefed/node_list
 
 # scenario2
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/ocm/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/karmada-pull/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/karmada-push/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/kubefed/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/3-ocm/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/1-karmada-pull/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/2-karmada-push/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario2/4-kubefed/node_list
 
 # scenario3
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/ocm/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/karmada-pull/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/karmada-push/node_list
-scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/kubefed/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/3-ocm/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/1-karmada-pull/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/2-karmada-push/node_list
+scp node_list root@$manage:/root/sec2025/federation_framework/scenario3/4-kubefed/node_list
 echo "management node is $manage"
