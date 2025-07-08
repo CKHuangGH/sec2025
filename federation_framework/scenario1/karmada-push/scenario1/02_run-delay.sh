@@ -31,7 +31,7 @@ for (( times=0; times<7; times++ )); do
     done
     sleep 10
     bash ./script/getdocker.sh $number $times
-    bash ./script/copyprom.sh $number $times
+    # bash ./script/copyprom.sh $number $times
     bash ./script/reset.sh $number
     bash ./script/deleteprometheus.sh
     sleep 60
