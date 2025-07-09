@@ -24,7 +24,7 @@ conf = (
         id="not_linked_to_any_machine", type="slash_22", roles=["my_subnet"], site=site
     )
     .add_machine(
-    roles=["role0"], cluster=clusters, nodes=28, primary_network=prod_network
+    roles=["role0"], cluster=clusters, nodes=30, primary_network=prod_network
     )
     .finalize()
 )

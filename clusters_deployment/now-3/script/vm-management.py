@@ -18,7 +18,7 @@ subnet = networks["my_subnet"]
 mac = list(subnet[0].free_macs)[0]
 
 virt_conf = (
-    en.VMonG5kConf.from_settings(image="/home/chuang/images/debian31032025.qcow2")
+    en.VMonG5kConf.from_settings(image="/home/chuang/images/large_debian02072025.qcow2")
     .add_machine(
         roles=["cp"],
         number=1,
