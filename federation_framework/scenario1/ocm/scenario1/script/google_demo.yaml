@@ -23,6 +23,7 @@ kind: Deployment
 metadata:
   name: emailservice-${ID}
   labels:
+    namespace: default
     app: emailservice-${ID}
     deployto: cluster1
 spec:
@@ -70,6 +71,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: emailservice-${ID}
   labels:
     app: emailservice-${ID}
@@ -86,6 +88,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: emailservice-${ID}
   labels:
     deployto: cluster1
@@ -93,6 +96,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: checkoutservice-${ID}
   labels:
     app: checkoutservice-${ID}
@@ -149,6 +153,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: checkoutservice-${ID}
   labels:
     app: checkoutservice-${ID}
@@ -165,6 +170,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: checkoutservice-${ID}
   labels:
     deployto: cluster1
@@ -172,6 +178,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: recommendationservice-${ID}
   labels:
     app: recommendationservice-${ID}
@@ -223,6 +230,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: recommendationservice-${ID}
   labels:
     app: recommendationservice-${ID}
@@ -239,6 +247,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: recommendationservice-${ID}
   labels:
     deployto: cluster1
@@ -246,6 +255,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: frontend-${ID}
   labels:
     app: frontend-${ID}
@@ -333,6 +343,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: frontend-${ID}
   labels:
     app: frontend-${ID}
@@ -364,6 +375,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: frontend-${ID}
   labels:
     deployto: cluster1
@@ -371,6 +383,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: paymentservice-${ID}
   labels:
     app: paymentservice-${ID}
@@ -418,6 +431,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: paymentservice-${ID}
   labels:
     app: paymentservice-${ID}
@@ -434,6 +448,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: paymentservice-${ID}
   labels:
     deployto: cluster1
@@ -441,6 +456,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: productcatalogservice-${ID}
   labels:
     app: productcatalogservice-${ID}
@@ -488,6 +504,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: productcatalogservice-${ID}
   labels:
     app: productcatalogservice-${ID}
@@ -504,6 +521,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: productcatalogservice-${ID}
   labels:
     deployto: cluster1
@@ -511,6 +529,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: cartservice-${ID}
   labels:
     app: cartservice-${ID}
@@ -559,6 +578,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: cartservice-${ID}
   labels:
     app: cartservice-${ID}
@@ -575,6 +595,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: cartservice-${ID}
   labels:
     deployto: cluster1
@@ -582,6 +603,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: redis-cart-${ID}
   labels:
     app: redis-cart-${ID}
@@ -630,6 +652,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: redis-cart-${ID}
   labels:
     app: redis-cart-${ID}
@@ -733,6 +756,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: currencyservice-${ID}
   labels:
     app: currencyservice-${ID}
@@ -781,6 +805,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: currencyservice-${ID}
   labels:
     app: currencyservice-${ID}
@@ -797,6 +822,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: currencyservice-${ID}
   labels:
     deployto: cluster1
@@ -804,6 +830,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: shippingservice-${ID}
   labels:
     app: shippingservice-${ID}
@@ -851,6 +878,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: shippingservice-${ID}
   labels:
     app: shippingservice-${ID}
@@ -867,6 +895,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: shippingservice-${ID}
   labels:
     deployto: cluster1
@@ -874,6 +903,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: default
   name: adservice-${ID}
   labels:
     app: adservice-${ID}
@@ -923,6 +953,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: default
   name: adservice-${ID}
   labels:
     app: adservice-${ID}
@@ -939,6 +970,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: default
   name: adservice-${ID}
   labels:
     deployto: cluster1
