@@ -11,6 +11,7 @@ for (( times=0; times<7; times++ )); do
     done
     sleep 60
     bash ./script/init_reg.sh
+    bash ./script/auto.sh
     sleep 20
     bash ./script/finish.sh
     sleep 30
@@ -19,7 +20,9 @@ for (( times=0; times<7; times++ )); do
     bash ./script/run_stress.sh $number
     sleep 30
     bash ./script/delete.sh $number
-    sleep 60 
+    sleep 60
+    bash ./reset_delay.sh
+    sleep 5
     python3 ./script/getmetrics_cpuram_time.py
     sleep 10
     for ip in $(cat node_exec)
@@ -28,7 +31,7 @@ for (( times=0; times<7; times++ )); do
     done
     sleep 10
     bash ./script/getdocker.sh $number $times
-    bash ./script/copyprom.sh $number $times
+    # bash ./script/copyprom.sh $number $times
     bash ./script/reset.sh $number
     bash ./script/deleteprometheus.sh
     sleep 60

@@ -18,4 +18,6 @@ rm -f /root/controller_extended_metrics.csv
 
 rm -rf /root/prom-$number/
 
+rm -f /root/snapshot.json
+
 clusteradm unjoin --cluster-name cluster1

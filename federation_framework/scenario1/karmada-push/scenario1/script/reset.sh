@@ -25,6 +25,8 @@ rm -rf /var/lib/karmada-etcd
 
 rm -f /root/number.txt
 
+rm -rf ../snapshot.json
+
 rm -f ../number.txt
 
 rm -f ../cross

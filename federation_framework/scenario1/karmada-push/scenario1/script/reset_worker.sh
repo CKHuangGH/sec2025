@@ -26,6 +26,8 @@ rm -f /root/apiserver_metrics_avg_10min.csv
 
 rm -f /root/controller_extended_metrics.csv
 
+rm -f /root/snapshot.json
+
 # rm -f /etc/karmada/karmada-agent.conf
 
 # rm -f /etc/karmada/pki/ca.crt

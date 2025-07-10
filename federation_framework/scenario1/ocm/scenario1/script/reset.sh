@@ -51,6 +51,7 @@ done
 sleep 5
 for ((i=1; i<=1; i++)); do
     kubectl delete ns cluster$i
+    rm -f ../run$i.sh
 done
 
 rm -rf /root/prom-$number/
@@ -59,8 +60,14 @@ rm -rf /root/prom-$number-member/
 
 rm -f /root/number.txt
 
+rm -f ../run.sh
+
+rm -f ../temp.sh
+
 rm -f ../number.txt
 
 rm -f ../cross
+
+rm -rf ../snapshot.json
 
 kubectl delete ns monitoring

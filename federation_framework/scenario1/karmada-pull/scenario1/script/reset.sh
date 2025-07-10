@@ -29,6 +29,8 @@ rm -f /root/number.txt
 
 rm -f ../number.txt
 
+rm -rf ../snapshot.json
+
 rm -f ../cross
 
 kubectl delete ns monitoring
