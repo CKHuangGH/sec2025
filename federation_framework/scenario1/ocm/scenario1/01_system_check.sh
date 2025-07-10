@@ -1,5 +1,5 @@
-kubectl get pod -A
-kubectl get pod -A --context cluster1
+kubectl get pod -A --field-selector=status.phase!=Running
+kubectl get pod -A --context cluster1 --field-selector=status.phase!=Running
 
 cp ../node_list node_list
 cp ../node_list_all node_list_all
