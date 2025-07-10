@@ -21,7 +21,7 @@ accept_clusters() {
 # It retrieves the total number of namespaces (excluding header) and subtracts 6.
 get_adjusted_ns_count() {
   ns_count=$(kubectl get ns --no-headers | wc -l)
-  echo $(( ns_count - 8 ))
+  echo $(( ns_count - 7 ))
 }
 
 # Main loop: repeat the cluster acceptance process until the adjusted namespace count equals the desired value.

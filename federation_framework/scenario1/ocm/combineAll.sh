@@ -68,7 +68,9 @@ done < node_ip_all
 
 while IFS= read -r ip_address; do
   echo "Send to $ip_address..."
-  scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no /root/ocm_package/quay.io_open-cluster-management_registration-operator_v0.16.0.tar root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no /root/ocm_package/quay.io_open-cluster-management_registration_v0.16.0.tar root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no /root/ocm_package/quay.io_open-cluster-management_work_v0.16.0.tar root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/addon/ root@$ip_address:/root/ &
@@ -82,7 +84,9 @@ current_jobs=0
 while IFS= read -r ip_address; do
   echo "Import to $ip_address..."
   ssh -o StrictHostKeyChecking=no root@$ip_address bash -c "'
-    ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar  &
+    ctr -n k8s.io images import /root/quay.io_open-cluster-management_registration-operator_v0.16.0.tar  &
+    ctr -n k8s.io images import /root/quay.io_open-cluster-management_registration_v0.16.0.tar  &
+    ctr -n k8s.io images import /root/quay.io_open-cluster-management_work_v0.16.0.tar  &
     for image in /root/images_google/*.tar; do
       ctr -n k8s.io images import \"\$image\"  &
     done
@@ -104,7 +108,7 @@ wait
 
 echo "All imports done on all nodes!"
 
-cd /root/karmada_package
+cd /root/ocm_package
 
 for image in *.tar *.tar.gz; do
     if [ -f "$image" ]; then
