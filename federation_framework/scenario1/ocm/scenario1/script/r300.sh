@@ -10,8 +10,7 @@ for ((start=1; start<=total; start+=batch_size)); do
   fi
 
   for ((i=start; i<=end; i++)); do
-    export ID=$i
-    envsubst < ./script/google_demo.yaml | clusteradm delete -f - &
+	clusteradm delete work demo$i --cluster cluster1 &
   done
 
   wait  # 等待這一輪 12 個指令都跑完
