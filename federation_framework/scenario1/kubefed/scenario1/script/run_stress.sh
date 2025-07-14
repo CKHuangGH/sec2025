@@ -21,14 +21,14 @@ sleep 120
 
 echo "start deployment $(date +'%s.%N')" >> number.txt
 for ip in $(cat node_exec); do 
-  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/timesave.sh "start deployment"
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/timesave.sh "start deployment"
 done
 cp ./number.txt /root/number.txt
 
 bash ./script/$number.sh > /dev/null 2>&1 &
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/checking_pod.sh $POD_THRESHOLD
+  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/checking_pod.sh $POD_THRESHOLD
 done
 
 for (( i=900; i>0; i-- )); do
@@ -50,16 +50,16 @@ sleep 2
 
 for ip in $(cat node_exec); do 
 
-  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/timesave.sh "calc cpuram average time"
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/getmetrics_cpuram_average10_member.py #ok
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/timesave.sh "calc cpuram average time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/getmetrics_cpuram_average10_member.py #ok
   sleep 2
 
-  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/timesave.sh "calc member k8s api time"
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/getmetrics_latency_average10.py #ok
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/timesave.sh "calc member k8s api time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/getmetrics_latency_average10.py #ok
   sleep 2
 
-  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/timesave.sh "calc member k8s controller time"
-  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/getmetrics_controller_average10.py #ok
+  ssh root@$ip bash /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/timesave.sh "calc member k8s controller time"
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/getmetrics_controller_average10.py #ok
   sleep 2
 done
 

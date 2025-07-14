@@ -99,7 +99,7 @@ kubectl apply -f patched-clusterrole.yaml --kubeconfig /etc/karmada/karmada-apis
 
 # File paths
 CLUSTERROLE_FILE="patched-clusterrole.yaml"
-SECRET_FILE="/root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/secret.yaml"
+SECRET_FILE="/root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/secret.yaml"
 TEMP_FILE="secret.tmp.yaml"
 
 # Get metadata.name from ClusterRole
@@ -140,7 +140,7 @@ kubectl apply -f ./script/secret.yaml --kubeconfig /etc/karmada/karmada-apiserve
 KUBECONFIG_PATH="/etc/karmada/karmada-apiserver.config"
 SECRET_NAME="prometheus"
 NAMESPACE="monitoring"
-VALUES_FILE="/root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/values.yaml"
+VALUES_FILE="/root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/values.yaml"
 
 # Retrieve and decode token
 TOKEN=$(kubectl get secret "$SECRET_NAME" -n "$NAMESPACE" \
@@ -176,7 +176,7 @@ echo "Found release: $RELEASE_NAME"
 helm upgrade "$RELEASE_NAME" prometheus-community/kube-prometheus-stack \
   --version 70.4.2 \
   --namespace monitoring \
-  --values /root/sec2025/federation_framework/scenario1/karmada-push/scenario1/script/values.yaml \
+  --values /root/sec2025/federation_framework/scenario1/kubefed/scenario1/script/values.yaml \
   --set grafana.enabled=false \
   --set alertmanager.enabled=false \
   --set prometheus.service.type=NodePort \
