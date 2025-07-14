@@ -14,7 +14,6 @@ for (( times=0; times<7; times++ )); do
     sleep 30
     kubectl --kubeconfig /etc/karmada/karmada-apiserver.config apply -f ./script/propagationpolicy.yaml
     mkdir results
-    bash ./script/karmadaprom.sh
     sleep 60
     bash ./script/run_stress.sh $number
     sleep 30
@@ -28,7 +27,6 @@ for (( times=0; times<7; times++ )); do
     done
     sleep 10
     bash ./script/getdocker.sh $number $times
-    bash ./script/copyprom.sh $number $times
     bash ./script/reset.sh $number
     bash ./script/deleteprometheus.sh
     sleep 60
