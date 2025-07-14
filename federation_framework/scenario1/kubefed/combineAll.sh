@@ -7,6 +7,11 @@ sudo systemctl stop ntp
 sudo ntpd -gq
 sudo systemctl start ntp
 
+# Install kubefedctl
+wget --tries=0 https://github.com/kubernetes-sigs/kubefed/releases/download/v0.9.2/kubefedctl-0.9.2-linux-amd64.tgz
+tar xzvf kubefedctl-0.9.2-linux-amd64.tgz
+mv kubefedctl /usr/local/bin/
+
 for i in `seq 0 $number`
 do
     sed -i 's/kubernetes-admin/k8s-admin-cluster'$i'/g' ~/.kube/cluster$i
@@ -68,7 +73,7 @@ done < node_ip_all
 
 while IFS= read -r ip_address; do
   echo "Send to $ip_address..."
-  scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
+  # scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/addon/ root@$ip_address:/root/ &
@@ -78,11 +83,10 @@ wait
 
 MAX_PARALLEL=50
 current_jobs=0
-
+# ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar  &
 while IFS= read -r ip_address; do
   echo "Import to $ip_address..."
   ssh -o StrictHostKeyChecking=no root@$ip_address bash -c "'
-    ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar  &
     for image in /root/images_google/*.tar; do
       ctr -n k8s.io images import \"\$image\"  &
     done
@@ -104,14 +108,14 @@ wait
 
 echo "All imports done on all nodes!"
 
-cd /root/karmada_package
+# cd /root/karmada_package
 
-for image in *.tar *.tar.gz; do
-    if [ -f "$image" ]; then
-        echo "Importing image: $image"
-        ctr -n k8s.io images import "$image"
-    fi
-done
+# for image in *.tar *.tar.gz; do
+#     if [ -f "$image" ]; then
+#         echo "Importing image: $image"
+#         ctr -n k8s.io images import "$image"
+#     fi
+# done
 
 cd /root/images_system
 
@@ -138,6 +142,7 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 for i in `seq 0 0`
 do
     kubectl config use-context cluster$i
+    helm repo add kubefed-charts https://raw.githubusercontent.com/kubernetes-sigs/kubefed/master/charts
 	  helm repo update
 	  helm install cilium cilium/cilium --version 1.17.2 --wait --wait-for-jobs --namespace kube-system --set operator.replicas=1
     sleep 30
