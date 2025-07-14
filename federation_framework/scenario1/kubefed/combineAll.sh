@@ -57,8 +57,8 @@ done
 tail -n +2 node_ip_all > node_ip
 
 while IFS= read -r ip_address; do
-  scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/kubefed/node_ip_all root@$ip_address:/root/
-  scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/kubefed/ntp.sh root@$ip_address:/root/
+  scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/karmada-push/node_ip_all root@$ip_address:/root/
+  scp -o StrictHostKeyChecking=no /root/sec2025/federation_framework/scenario1/karmada-push/ntp.sh root@$ip_address:/root/
 done < "node_ip_all"
 
 while IFS= read -r ip_address; do
@@ -122,14 +122,14 @@ for image in *.tar *.tar.gz; do
     fi
 done
 
-cd /root/sec2025/federation_framework/scenario1/kubefed/
+cd /root/sec2025/federation_framework/scenario1/karmada-push/
 
 cluster=1
 for i in $(cat node_list)
 do
 	ssh-keyscan $i >> /root/.ssh/known_hosts
 	scp /root/.kube/config root@$i:/root/.kube
-	ssh root@$i bash /root/sec2025/federation_framework/scenario1/kubefed/worker_node.sh $cluster &
+	ssh root@$i bash /root/sec2025/federation_framework/scenario1/karmada-push/worker_node.sh $cluster &
 	cluster=$((cluster+1))
 done
 
