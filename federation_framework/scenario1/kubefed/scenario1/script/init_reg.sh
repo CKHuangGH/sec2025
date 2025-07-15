@@ -58,4 +58,5 @@ kubefedctl join ${JOIN_CLUSTER_CONTEXT} \
   --host-cluster-context=${HOST_CLUSTER_CONTEXT} \
   --cluster-context=${JOIN_CLUSTER_CONTEXT} \
   --secret-name=${SECRET_NAME} \
+  --error-on-existing=false
   --v=2
