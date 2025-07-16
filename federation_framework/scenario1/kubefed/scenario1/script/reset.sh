@@ -15,7 +15,9 @@ kubectl-karmada unjoin cluster1 --kubeconfig /etc/karmada/karmada-apiserver.conf
 
 sleep 10
 
-echo "y" | kubectl karmada deinit
+kubectl -n kube-federation-system delete FederatedTypeConfig --all
+
+helm --namespace kube-federation-system uninstall kubefed
 
 rm -rf /root/prom-$number/
 

@@ -8,8 +8,8 @@ sudo ntpd -gq
 sudo systemctl start ntp
 
 # Install kubefedctl
-wget --tries=0 https://github.com/kubernetes-sigs/kubefed/releases/download/v0.9.2/kubefedctl-0.9.2-linux-amd64.tgz
-tar xzvf kubefedctl-0.9.2-linux-amd64.tgz
+wget --tries=0 https://github.com/kubernetes-retired/kubefed/releases/download/v0.10.0/kubefedctl-0.10.0-linux-amd64.tgz
+tar xzvf kubefedctl-0.10.0-linux-amd64.tgz
 mv kubefedctl /usr/local/bin/
 
 for i in `seq 0 $number`
