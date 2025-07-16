@@ -7,7 +7,8 @@ do
     ssh root@$i kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
 done
 
-helm install liqo liqo/liqo --namespace liqo --version v1.0.1
+kubectl create namespace liqo
+liqoctl install --pod-cidr 10.0.0.0/8 --service-cidr 10.0.0.0/8 --version v1.0.1
 sleep 10
 
 cluster=1
