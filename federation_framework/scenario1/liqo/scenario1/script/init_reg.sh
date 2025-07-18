@@ -8,8 +8,8 @@ do
 done
 
 kubectl create namespace liqo
-helm install liqo liqo/liqo --namespace liqo --version v1.0.1 --create-namespace
-# liqoctl install kubeadm --pod-cidr 10.0.0.0/8 --service-cidr 10.0.0.0/8 --version v1.0.1
+# helm install liqo liqo/liqo --namespace liqo --version v1.0.1 --create-namespace
+# liqoctl install --pod-cidr 10.0.0.0/8 --service-cidr 10.0.0.0/8 --version v1.0.1
 # liqoctl install kubeadm --version v1.0.1
 sleep 10
 
