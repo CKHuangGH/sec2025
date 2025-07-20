@@ -8,18 +8,14 @@ do
 done
 
 kubectl create namespace liqo
-# helm install liqo liqo/liqo --namespace liqo --version v1.0.1 --create-namespace
-# liqoctl install --pod-cidr 10.0.0.0/8 --service-cidr 10.0.0.0/8 --version v1.0.1
-# liqoctl install kubeadm --version v1.0.1
+liqoctl install --pod-cidr 10.0.0.0/16 --service-cidr 10.96.0.0/12 --version v1.0.1 --cluster-name cluster1
 sleep 10
 
 cluster=1
 for i in $(cat node_exec)
 do
-    liqoctl peer --kubeconfig $HOME/.kube/cluster0 --remote-kubeconfig $HOME/.kube/cluster$cluster
+    liqoctl peer --remote-kubeconfig $HOME/.kube/cluster$cluster --gw-server-service-type NodePort
 	cluster=$((cluster+1))
 done
-
-liqoctl info
-liqoctl info peer
-sleep 10
+kubectl create namespace liqo-demo
+liqoctl offload namespaces qqq --pod-offloading-strategy Remote
