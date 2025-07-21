@@ -29,6 +29,7 @@ scp -r /home/chuang/karmada_package root@$manage:/root/
 scp -r /home/chuang/images_system root@$manage:/root/
 scp -r /home/chuang/images_google root@$manage:/root/
 scp -r /home/chuang/ocm_package root@$manage:/root/
+scp -r /home/chuang/liqo_package root@$manage:/root/
 
 # scenario1
 scp node_list root@$manage:/root/sec2025/federation_framework/scenario1/ocm/node_list

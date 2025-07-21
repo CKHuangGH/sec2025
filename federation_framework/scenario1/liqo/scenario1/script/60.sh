@@ -11,7 +11,7 @@ for ((start=1; start<=total; start+=batch_size)); do
 
   for ((i=start; i<=end; i++)); do
     export ID=$i
-    envsubst < ./script/google_demo.yaml | kubectl apply -n default -f - &
+    envsubst < ./script/google_demo.yaml | kubectl apply -n liqo-demo -f - &
   done
 
   wait

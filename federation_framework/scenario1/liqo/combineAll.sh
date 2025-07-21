@@ -71,17 +71,17 @@ done < node_ip_all
 
 while IFS= read -r ip_address; do
   echo "Send to $ip_address..."
-  # scp -o StrictHostKeyChecking=no /root/karmada_package/docker.io_karmada_karmada-agent_v1.13.1.tar root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_google/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/images_system/ root@$ip_address:/root/ &
   scp -o StrictHostKeyChecking=no -r /root/addon/ root@$ip_address:/root/ &
+  scp -o StrictHostKeyChecking=no -r /root/liqo_package/ root@$ip_address:/root/ &
 done < "node_ip"
 
 wait
 
 MAX_PARALLEL=50
 current_jobs=0
-# ctr -n k8s.io images import /root/docker.io_karmada_karmada-agent_v1.13.1.tar  &
+
 while IFS= read -r ip_address; do
   echo "Import to $ip_address..."
   ssh -o StrictHostKeyChecking=no root@$ip_address bash -c "'
@@ -89,6 +89,9 @@ while IFS= read -r ip_address; do
       ctr -n k8s.io images import \"\$image\"  &
     done
     for image in /root/images_system/*.tar; do
+      ctr -n k8s.io images import \"\$image\"  &
+    done
+    for image in /root/liqo_package/*.tar; do
       ctr -n k8s.io images import \"\$image\"  &
     done
     wait
@@ -106,14 +109,14 @@ wait
 
 echo "All imports done on all nodes!"
 
-# cd /root/karmada_package
+cd /root/liqo_package
 
-# for image in *.tar *.tar.gz; do
-#     if [ -f "$image" ]; then
-#         echo "Importing image: $image"
-#         ctr -n k8s.io images import "$image"
-#     fi
-# done
+for image in *.tar *.tar.gz; do
+    if [ -f "$image" ]; then
+        echo "Importing image: $image"
+        ctr -n k8s.io images import "$image"
+    fi
+done
 
 cd /root/images_system
 

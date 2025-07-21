@@ -18,5 +18,5 @@ do
     liqoctl peer --remote-kubeconfig $HOME/.kube/cluster$cluster --gw-server-service-type NodePort
 	cluster=$((cluster+1))
 done
-kubectl create namespace default
-liqoctl offload namespace default --namespace-mapping-strategy EnforceSameName --pod-offloading-strategy Remote
+kubectl create namespace liqo-demo
+liqoctl offload namespace liqo-demo --namespace-mapping-strategy EnforceSameName --pod-offloading-strategy Remote

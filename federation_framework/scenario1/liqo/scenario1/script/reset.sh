@@ -11,11 +11,13 @@ else
     echo "No tcpdump processes found."
 fi
 
-liqoctl unoffload namespace default --skip-confirm
+liqoctl unoffload namespace liqo-demo --skip-confirm
 
-kubectl delete namespace default
+kubectl delete namespace liqo-demo
 
 liqoctl unpeer --remote-kubeconfig /root/.kube/cluster1 --skip-confirm
+
+sleep 5
 
 liqoctl uninstall --skip-confirm
 
@@ -36,8 +38,8 @@ rm -f ../cross
 kubectl delete ns monitoring
 
 while true; do
-    running_pods=$(kubectl get pod -n karmada-system --no-headers | wc -l)
-    echo "Karmada CP pod: $running_pods"
+    running_pods=$(kubectl get pod -n liqo --no-headers | wc -l)
+    echo "liqo pod: $running_pods"
     if [ "$running_pods" -eq 0 ]; then
         break
     else

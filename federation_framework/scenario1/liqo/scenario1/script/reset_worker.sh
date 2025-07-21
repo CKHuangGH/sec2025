@@ -35,3 +35,13 @@ rm -f /root/snapshot.json
 # rm -f /etc/karmada/pki/ca.crt
 
 rm -rf /root/prom-$number/
+
+while true; do
+    running_pods=$(kubectl get pod -n liqo --no-headers | wc -l)
+    echo "liqo pod: $running_pods"
+    if [ "$running_pods" -eq 0 ]; then
+        break
+    else
+        sleep 1
+    fi
+done
