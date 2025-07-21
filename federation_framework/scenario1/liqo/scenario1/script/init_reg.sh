@@ -8,7 +8,8 @@ do
 done
 
 kubectl create namespace liqo
-liqoctl install --pod-cidr 10.0.0.0/16 --service-cidr 10.96.0.0/12 --version v1.0.1 --cluster-name cluster1
+liqoctl install --pod-cidr 10.0.0.0/16 --service-cidr 10.96.0.0/12 --version v1.0.1 --cluster-id cluster0 --context cluster0
+liqoctl install --pod-cidr 10.0.0.0/16 --service-cidr 10.96.0.0/12 --version v1.0.1 --cluster-id cluster1 --context cluster1
 sleep 10
 
 cluster=1
@@ -18,4 +19,4 @@ do
 	cluster=$((cluster+1))
 done
 kubectl create namespace liqo-demo
-liqoctl offload namespaces qqq --pod-offloading-strategy Remote
+liqoctl offload namespace liqo-demo --namespace-mapping-strategy EnforceSameName --pod-offloading-strategy Remote

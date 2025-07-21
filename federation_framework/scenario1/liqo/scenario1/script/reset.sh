@@ -11,17 +11,19 @@ else
     echo "No tcpdump processes found."
 fi
 
-kubectl-karmada unjoin cluster1 --kubeconfig /etc/karmada/karmada-apiserver.config
+liqoctl unoffload namespace liqo-demo
+
+kubectl delete namespace liqo-demo
+
+liqoctl unpeer --remote-kubeconfig /root/.kube/cluster1
+
+liqoctl uninstall --skip-confirm
 
 sleep 10
-
-echo "y" | kubectl karmada deinit
 
 rm -rf /root/prom-$number/
 
 rm -rf /root/prom-$number-member/
-
-rm -rf /var/lib/karmada-etcd
 
 rm -f /root/number.txt
 

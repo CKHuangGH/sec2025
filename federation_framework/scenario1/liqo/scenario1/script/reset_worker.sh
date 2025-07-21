@@ -12,6 +12,8 @@ number=$1
 
 # kubectl delete ns karmada-system
 
+liqoctl uninstall --skip-confirm
+
 kubectl delete ns monitoring
 
 rm -f /root/time.txt
