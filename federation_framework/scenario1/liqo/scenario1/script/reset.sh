@@ -11,11 +11,11 @@ else
     echo "No tcpdump processes found."
 fi
 
-liqoctl unoffload namespace liqo-demo
+liqoctl unoffload namespace default --skip-confirm
 
-kubectl delete namespace liqo-demo
+kubectl delete namespace default
 
-liqoctl unpeer --remote-kubeconfig /root/.kube/cluster1
+liqoctl unpeer --remote-kubeconfig /root/.kube/cluster1 --skip-confirm
 
 liqoctl uninstall --skip-confirm
 
