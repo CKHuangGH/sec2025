@@ -15,7 +15,7 @@ sleep 10
 cluster=1
 for i in $(cat node_exec)
 do
-    liqoctl peer --remote-kubeconfig $HOME/.kube/cluster$cluster --gw-server-service-type NodePort --cpu 516 --memory 962Gi --pod 11000
+    liqoctl peer --remote-kubeconfig $HOME/.kube/cluster$cluster --gw-server-service-type NodePort --cpu 516 --memory 962Gi --pods 11000
 	cluster=$((cluster+1))
 done
 kubectl create namespace liqo-demo
