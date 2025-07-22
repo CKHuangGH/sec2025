@@ -39,14 +39,6 @@ sleep 30
 sed -i 's|--bind-address=127.0.0.1|--bind-address=0.0.0.0|' "/etc/kubernetes/manifests/kube-controller-manager.yaml"
 sleep 60
 
-while read line
-do 
-echo $line
-ip1=$(echo $line | cut -d "." -f 2)
-ip2=$(echo $line | cut -d "." -f 3)
-break
-done < node_list_all
-
 ip=$(cat node_list)
 
 > node_ip_all
@@ -65,8 +57,9 @@ while IFS= read -r ip_address; do
 done < "node_ip_all"
 
 while IFS= read -r ip_address; do
-  ssh -n -o StrictHostKeyChecking=no root@"$ip_address" mkdir -p /var/log/ntpsec
-  ssh -n -o StrictHostKeyChecking=no root@"$ip_address" "nohup bash /root/ntp.sh > /var/log/ntpsec/ntp.log 2>&1 &"
+  ssh -o StrictHostKeyChecking=no root@"$ip_address" mkdir -p /var/log/ntpsec
+  ssh -o StrictHostKeyChecking=no root@"$ip_address" "bash /root/ntp.sh"
+  # ssh -n -o StrictHostKeyChecking=no root@"$ip_address" "nohup bash /root/ntp.sh > /var/log/ntpsec/ntp.log 2>&1 &"
 done < node_ip_all
 
 while IFS= read -r ip_address; do
