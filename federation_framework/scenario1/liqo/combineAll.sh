@@ -57,9 +57,8 @@ while IFS= read -r ip_address; do
 done < "node_ip_all"
 
 while IFS= read -r ip_address; do
-  ssh -o StrictHostKeyChecking=no root@"$ip_address" mkdir -p /var/log/ntpsec
-  ssh -o StrictHostKeyChecking=no root@"$ip_address" "bash /root/ntp.sh"
-  # ssh -n -o StrictHostKeyChecking=no root@"$ip_address" "nohup bash /root/ntp.sh > /var/log/ntpsec/ntp.log 2>&1 &"
+  ssh -n -o StrictHostKeyChecking=no root@"$ip_address" mkdir -p /var/log/ntpsec
+  ssh -n -o StrictHostKeyChecking=no root@"$ip_address" "nohup bash /root/ntp.sh > /var/log/ntpsec/ntp.log 2>&1 &"
 done < node_ip_all
 
 while IFS= read -r ip_address; do
