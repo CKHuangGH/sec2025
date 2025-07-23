@@ -28,7 +28,7 @@ cp ./number.txt /root/number.txt
 bash ./script/$number.sh > /dev/null 2>&1 &
 
 for ip in $(cat node_exec); do 
-  ssh -o LogLevel=ERROR root@$ip bash /root/sec2025/federation_framework/scenario1/liqo/scenario1/script/checking_pod.sh $POD_THRESHOLD
+  ssh -o LogLevel=ERROR root@$ip python3 /root/sec2025/federation_framework/scenario1/liqo/scenario1/script/check_pod_list_watch.py $POD_THRESHOLD
 done
 
 for (( i=900; i>0; i-- )); do
