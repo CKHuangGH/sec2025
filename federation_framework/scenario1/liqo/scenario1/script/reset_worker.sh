@@ -12,7 +12,11 @@ number=$1
 
 # kubectl delete ns karmada-system
 
-liqoctl uninstall --skip-confirm
+liqoctl uninstall --skip-confirm --purge
+
+kubectl delete namespace liqo-demo
+
+kubectl delete ns liqo
 
 kubectl delete ns monitoring
 

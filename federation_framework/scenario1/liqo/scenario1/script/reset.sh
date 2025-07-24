@@ -19,7 +19,9 @@ liqoctl unpeer --remote-kubeconfig /root/.kube/cluster1 --skip-confirm
 
 sleep 5
 
-liqoctl uninstall --skip-confirm
+liqoctl uninstall --skip-confirm --purge
+
+kubectl delete ns liqo
 
 sleep 10
 
